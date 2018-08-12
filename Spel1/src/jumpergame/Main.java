@@ -1,4 +1,4 @@
-package game;
+package jumpergame;
 
 import java.awt.event.KeyEvent;
 

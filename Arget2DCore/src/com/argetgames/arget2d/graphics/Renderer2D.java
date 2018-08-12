@@ -123,7 +123,6 @@ public class Renderer2D {
 	public void renderImage2D(int startX, int startY, int width, int height, Image2D image){
 		double wScale = image.width / (double)width;
 		double hScale = image.height / (double)height;
-		System.out.println("W: " +wScale + " | H: " + hScale);
 		
 		for(int j = 0; j < height; j++ ){
 			int y = startY + j;

@@ -1,7 +1,8 @@
-package game;
+package jumpergame;
 
 import java.util.Random;
 
+import com.argetgames.arget2d.graphics.Image2D;
 import com.argetgames.arget2d.graphics.Renderer2D;
 
 public class Block {
@@ -23,7 +24,6 @@ public class Block {
 		speed = r.nextInt(3)*3 + 1;
 		color = (0xFFFF / speed) & 0xFFFF;
 		color |= 0x7F220000;
-		System.out.println(speed);
 	}
 	
 	public void move() {
@@ -32,6 +32,7 @@ public class Block {
 	
 	public void draw(Renderer2D renderer) {
 		renderer.fillRect(x, y, 40, 70, color);
+		renderer.renderImage2D(x, y, 21, 21, Image2D.test);
 	}
 
 }

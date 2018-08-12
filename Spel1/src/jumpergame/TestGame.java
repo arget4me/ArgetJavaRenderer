@@ -1,19 +1,20 @@
-package game;
+package jumpergame;
 
 import java.awt.event.KeyEvent;
 
 import com.argetgames.arget2d.game.Gameloop;
 import com.argetgames.arget2d.graphics.Image2D;
-import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
 import com.argetgames.arget2d.input.Mouse.MouseButton;
+
+import jumpergame.entities.Entity;
 
 public class TestGame extends Gameloop{
 	int x = 0, y = 0;
 	int spawnX = 600;
 	int x2 = spawnX, y2 = HEIGHT  / 2 +  -50;
-	Block b = new Block(spawnX, y2);
+	Entity e = new Entity(WIDTH / 2, HEIGHT / 2, 100, 100, 100);
 	boolean mousePress = false;
 
 	public TestGame(int width, int height, int scale) {
@@ -24,22 +25,8 @@ public class TestGame extends Gameloop{
 
 	@Override
 	public void updateGame() {
-		b.move();
-		if(b.x < 0 - 40)
-			b.respawn();
+		e.update();
 		
-		if(Keyboard.getKey(KeyEvent.VK_D)){ 
-			x +=2;
-		}
-		if(Keyboard.getKey(KeyEvent.VK_A)){ 
-			x -=2;
-		}
-		if(Keyboard.getKey(KeyEvent.VK_W)){ 
-			y -=2;
-		}
-		if(Keyboard.getKey(KeyEvent.VK_S)){ 
-			y +=2;
-		}
 		if(Keyboard.getKey(KeyEvent.VK_SPACE)) {
 			y -= 5;
 		}else {
@@ -56,14 +43,13 @@ public class TestGame extends Gameloop{
 			mousePress = !mousePress;
 			renderer.useAlpha(mousePress);
 		}
-		//System.out.println("Y: " + y);
 	}
 
 	@Override
 	public void draw() {
 		int color = 0xAAFFFF00;
 		renderer.fillRect(WIDTH / 2 - 20 + x,  HEIGHT  / 2 - 20 + y, 40, 40, color);
-		b.draw(renderer);
+		e.draw(renderer);
 	}
 	
 }
