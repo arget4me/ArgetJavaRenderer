@@ -14,7 +14,7 @@ public class TestGame extends Gameloop{
 	int x = 0, y = 0;
 	int spawnX = 600;
 	int x2 = spawnX, y2 = HEIGHT  / 2 +  -50;
-	Entity e = new Entity(WIDTH / 2, HEIGHT / 2, 100, 100, 100);
+	Entity e = new Entity(WIDTH / 2, HEIGHT / 2, 10, 100, 100);
 	boolean mousePress = false;
 
 	public TestGame(int width, int height, int scale) {
@@ -48,8 +48,8 @@ public class TestGame extends Gameloop{
 	@Override
 	public void draw() {
 		int color = 0xAAFFFF00;
-		renderer.fillRect(WIDTH / 2 - 20 + x,  HEIGHT  / 2 - 20 + y, 40, 40, color);
 		e.draw(renderer);
+		renderer.fillRect(WIDTH / 2 - 20 + x,  HEIGHT / 6 * 4 + y, 40, 40, color);
 	}
 	
 }
