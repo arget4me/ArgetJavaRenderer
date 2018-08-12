@@ -98,6 +98,8 @@ public class Renderer2D {
 	
 	/**
 	 * Renders an image to the pixel buffer.
+	 * @param startX X-coordinate on the screen to render the image.
+	 * @param startY Y-coordinate on the screen to render the image.
 	 * @param image Image2D to render, colors are of type ARGB but alpha is only used if "useAlpha" has enabled it.
 	 */
 	public void renderImage2D(int startX, int startY, Image2D image){
@@ -106,6 +108,30 @@ public class Renderer2D {
 			for(int i = 0; i < image.width; i++ ){
 				int x = startX + i;
 				renderPixel(x, y, image.getColor(i + j * image.width));
+			}
+		}
+	}
+	
+	/**
+	 * Renders an image to the pixel buffer.
+	 * @param startX X-coordinate on the screen to render the image.
+	 * @param startY Y-coordinate on the screen to render the image.
+	 * @param width The width to render the image at. This causes scaling.
+	 * @param height The height to render the image at. This causes scaling.
+	 * @param image Image2D to render, colors are of type ARGB but alpha is only used if "useAlpha" has enabled it.
+	 */
+	public void renderImage2D(int startX, int startY, int width, int height, Image2D image){
+		double wScale = image.width / (double)width;
+		double hScale = image.height / (double)height;
+		System.out.println("W: " +wScale + " | H: " + hScale);
+		
+		for(int j = 0; j < height; j++ ){
+			int y = startY + j;
+			int ya = (int)(j*hScale);
+			for(int i = 0; i < width; i++ ){
+				int x = startX + i;
+				int xa = (int)(i*wScale);
+				renderPixel(x, y, image.getColor(xa + ya * image.width));
 			}
 		}
 	}
