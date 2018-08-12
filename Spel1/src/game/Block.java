@@ -1,4 +1,4 @@
-package jumpergame;
+package game;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package jumpergame.entities;
+package game.entities;
 
 import com.argetgames.arget2d.graphics.Image2D;
 import com.argetgames.arget2d.graphics.Renderer2D;

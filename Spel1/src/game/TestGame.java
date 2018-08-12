@@ -1,4 +1,4 @@
-package jumpergame;
+package game;
 
 import java.awt.event.KeyEvent;
 
@@ -8,7 +8,7 @@ import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
 import com.argetgames.arget2d.input.Mouse.MouseButton;
 
-import jumpergame.entities.Entity;
+import game.entities.Entity;
 
 public class TestGame extends Gameloop{
 	int x = 0, y = 0;
