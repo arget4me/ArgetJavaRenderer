@@ -120,7 +120,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 			pixelBuffer[i] = renderer.getPixel(i);
 		}
 		//g.drawImage(displayImage, 0, 0, getWidth(), getHeight(), null);
-		g.drawImage(displayImage, 0, 0, WIDTH, HEIGHT, null);
+		g.drawImage(displayImage, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
 		
 		g.dispose();
 		bs.show();

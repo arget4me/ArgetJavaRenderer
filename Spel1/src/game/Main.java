@@ -12,12 +12,12 @@ import com.argetgames.arget2d.input.Mouse.MouseButton;
 
 public class Main {
 	
-	private static TestGame game;
+	private static JumperGame game;
 	private static JFrame frame;
 
 	public static void main(String[] args) {
-		frame = new JFrame("Spel 1");
-		game = new TestGame(480, 360, 1);
+		frame = new JFrame("Game 1: Jumper");
+		game = new JumperGame(360, 240, 2);
 		frame.add(game);
 		frame.setResizable(false);
 		frame.pack();
