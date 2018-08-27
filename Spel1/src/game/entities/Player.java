@@ -13,7 +13,7 @@ public class Player {
 	private int width, height;
 	private double x, y;
 	private boolean jumping = false;
-	private boolean doubleJumping = true;
+	private boolean doubleJumping = false;
 	private boolean handledInput = false;
 	private boolean falling = false;
 	private double startY;
@@ -25,8 +25,15 @@ public class Player {
 	private double vel0_y = 2*jumpHeight / secondsToPeak;
 	private double acc_y = ((-2) * (jumpHeight)) / (secondsToPeak*secondsToPeak);
 	
+	//animation hack...
 	private int i = 0;
 	private int count = 1;
+	//animation hack...
+
+
+	//gameplay
+	private int livesLeft = 3;
+	private boolean alive = true;
 	
 	public Player(int x, int y, int width, int height){
 		this.x = x;
@@ -37,8 +44,6 @@ public class Player {
 		posY = 0.0;
 	}
 	
-	
-	
 	public void update() {
 		count++;
 		if(count % 5 == 0){
@@ -48,7 +53,6 @@ public class Player {
 		if(jumping){
 			jump();
 		}
-		
 	}
 	
 	private void handleInput(){
@@ -98,7 +102,22 @@ public class Player {
 		vel_y = vel0_y;
 	}
 	
+	public void hit() {
+		livesLeft--;
+		if(livesLeft <= 0)
+			alive = false;
+	}
 	
+	//TODO: only for testing
+	public void revive() {
+		alive = true;
+	}
+
+	public boolean isAlive() {return alive; }
+	public int getX() {return (int)x+width/3; }
+	public int getY() {return (int)y+height/5; }
+	public int getWidth() {return width/3; }
+	public int getHeight() {return height*3/5; }
 	
 	public void draw(Renderer2D renderer) {
 		/*Max Jump heights*/
@@ -111,7 +130,10 @@ public class Player {
 		//renderer.fillRect((int)x, (int)y, width, height, 0x88FF00FF);
 		
 		/*Hit box*/
-//		renderer.fillRect((int)x+width/3, (int)y, width/3, height, 0x88FF00FF);
+		if(alive)
+			renderer.fillRect(getX(), getY(), getWidth(), getHeight(), 0x22FF00FF);
+		else
+			renderer.fillRect(getX(), getY(), getWidth(), getHeight(), 0x88FF00FF);
 		/*Animation*/
 		if(jumping){
 			if(falling){
@@ -122,7 +144,8 @@ public class Player {
 		}else {
 			renderer.renderImage2D((int)x, (int)y, width, height, JumperGame.runAnimation[i%6]);
 		}
+		
+		
 	}
-	
 
 }

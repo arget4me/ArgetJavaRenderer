@@ -10,6 +10,9 @@ public class Obstacle {
 	private double startX;
 	public double speed;
 	
+	private boolean passed = false;
+	private boolean collided = false;
+	
 	public Obstacle(int x, int y, int width, int height, double speed){
 		this.x = x;
 		this.y = y;
@@ -19,21 +22,71 @@ public class Obstacle {
 		startX = this.x;
 	}
 	
-	private void respawn(){
-		x = startX;
-	}
-	
 	public void update(){
 		x -= speed;
-		if(x < 0 - width){
-			respawn();
+	}
+	
+	public int getRightX() {return (int)x + width;}
+	public boolean getPassed() {
+		boolean value = passed;
+		passed = true;
+		return value;
+	}
+
+	private boolean containsPoint(int xa, int ya){
+		if(ya >= y && ya < y + height) {
+			if(xa >= x && xa < x + width) {
+				return true;
+			}	
 		}
-			
+		return false;
+	}
+	
+	private boolean pointInsideRect(int x, int y, int width, int height, int xa, int ya) {
+		if(ya >= y && ya < y + height) {
+			if(xa >= x && xa < x + width) {
+				return true;
+			}	
+		}
+		return false;
+	}
+	
+	public boolean collision(int rectX, int rectY, int rectWidth, int rectHeight) {
+		if(collided)
+			return false;
+		if((width*width + height * height + rectWidth*rectWidth + rectHeight*rectHeight) < (x - rectX)*(x -rectX) + (y - rectY)*(y - rectY))
+			return false;
+		
+		if(containsPoint(rectX, rectY) ||
+				containsPoint(rectX + rectWidth-1, rectY) || 
+				containsPoint(rectX, rectY + rectHeight -1) || 
+				containsPoint(rectX + rectWidth-1, rectY + rectHeight -1)) {
+			collided = true;
+			return true;
+		}
+		
+		//TODO: if rect is bigger -> return true
+		if(width < rectWidth || height < rectHeight) {
+			if(pointInsideRect(rectX, rectY, rectWidth, rectHeight, (int)x, (int)y) || 
+					pointInsideRect(rectX, rectY, rectWidth, rectHeight, (int)x + width -1, (int)y) || 
+					pointInsideRect(rectX, rectY, rectWidth, rectHeight, (int)x, (int)y + height -1) || 
+					pointInsideRect(rectX, rectY, rectWidth, rectHeight, (int)x + width -1, (int)y + height -1)) {
+				collided = true;
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void draw(Renderer2D renderer) {
 		renderer.fillRect((int)x, (int)y, width, height, 0xFFCC8866);
 	}
+
+	public boolean hasCollided() {
+		return collided;
+	}
+
+	
 }
 
 
