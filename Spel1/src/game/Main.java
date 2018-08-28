@@ -1,14 +1,7 @@
 package game;
 
-import java.awt.event.KeyEvent;
-
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-
-import com.argetgames.arget2d.game.Gameloop;
-import com.argetgames.arget2d.graphics.Renderer2D;
-import com.argetgames.arget2d.input.Keyboard;
-import com.argetgames.arget2d.input.Mouse;
-import com.argetgames.arget2d.input.Mouse.MouseButton;
 
 public class Main {
 	
@@ -16,13 +9,15 @@ public class Main {
 	private static JFrame frame;
 
 	public static void main(String[] args) {
+		ImageIcon img = new ImageIcon("res/images/icon.png");
 		frame = new JFrame("Game 1: Jumper");
-		game = new JumperGame(360, 240, 2);
+		game = new JumperGame(360, 240, 3);
 		frame.add(game);
 		frame.setResizable(false);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
+		frame.setIconImage(img.getImage());
 		frame.setVisible(true);
 		
 		game.Start();

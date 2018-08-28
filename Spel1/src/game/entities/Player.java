@@ -34,6 +34,7 @@ public class Player {
 	//gameplay
 	private int livesLeft = 3;
 	private boolean alive = true;
+	private boolean dead = false;
 	
 	public Player(int x, int y, int width, int height){
 		this.x = x;
@@ -49,7 +50,8 @@ public class Player {
 		if(count % 5 == 0){
 			i++;
 		}
-		handleInput();
+		if(alive)
+			handleInput();
 		if(jumping){
 			jump();
 		}
@@ -104,8 +106,11 @@ public class Player {
 	
 	public void hit() {
 		livesLeft--;
-		if(livesLeft <= 0)
+		if(livesLeft <= 0) {
+			if(alive)
+				i = 0;
 			alive = false;
+		}
 	}
 	
 	//TODO: only for testing
@@ -114,6 +119,7 @@ public class Player {
 	}
 
 	public boolean isAlive() {return alive; }
+	public boolean deathAnimationDone() {return dead; }
 	public int getX() {return (int)x+width/3; }
 	public int getY() {return (int)y+height/5; }
 	public int getWidth() {return width/3; }
@@ -130,11 +136,13 @@ public class Player {
 		//renderer.fillRect((int)x, (int)y, width, height, 0x88FF00FF);
 		
 		/*Hit box*/
-		if(alive)
-			renderer.fillRect(getX(), getY(), getWidth(), getHeight(), 0x22FF00FF);
-		else
-			renderer.fillRect(getX(), getY(), getWidth(), getHeight(), 0x88FF00FF);
+//		if(alive)
+//			renderer.fillRect(getX(), getY(), getWidth(), getHeight(), 0x22FF00FF);
+//		else
+//			renderer.fillRect(getX(), getY(), getWidth(), getHeight(), 0x88FF00FF);
+		
 		/*Animation*/
+		
 		if(jumping){
 			if(falling){
 				renderer.renderImage2D((int)x, (int)y, width, height, JumperGame.fallAnimation[i%2]);
@@ -142,7 +150,20 @@ public class Player {
 				renderer.renderImage2D((int)x, (int)y, width, height, JumperGame.jumpAnimation[3]);
 			}
 		}else {
-			renderer.renderImage2D((int)x, (int)y, width, height, JumperGame.runAnimation[i%6]);
+			if(!alive) {
+				int frame = i;
+				if(frame > 6) {
+					frame = 6;
+					if(i > 1 * 60/5)
+						dead = true;
+					
+				}
+				renderer.renderImage2D((int)x, (int)y, width, height, JumperGame.dieAnimation[frame]);
+			}else
+				renderer.renderImage2D((int)x, (int)y, width, height, JumperGame.runAnimation[i%6]);
+		}
+		for(int i = 0; i < livesLeft; i++) {
+			renderer.renderImage2D((int)getX()-9 + i *12, (int)getY() - 15, 10, 10, JumperGame.life);
 		}
 		
 		

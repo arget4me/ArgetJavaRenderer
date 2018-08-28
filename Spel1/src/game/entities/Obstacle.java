@@ -3,6 +3,8 @@ package game.entities;
 import com.argetgames.arget2d.graphics.Image2D;
 import com.argetgames.arget2d.graphics.Renderer2D;
 
+import game.JumperGame;
+
 public class Obstacle {
 
 	private int width, height;
@@ -79,7 +81,8 @@ public class Obstacle {
 	}
 	
 	public void draw(Renderer2D renderer) {
-		renderer.fillRect((int)x, (int)y, width, height, 0xFFCC8866);
+		//renderer.fillRect((int)x, (int)y, width, height, 0xFFCC8866);
+		renderer.renderImage2D((int)x, (int)y, width, height, JumperGame.obstacle);
 	}
 
 	public boolean hasCollided() {

@@ -16,6 +16,8 @@ public class JumperGame extends Gameloop{
 	public static Image2D runAnimation[] = new Image2D[6];
 	public static Image2D fallAnimation[] = new Image2D[2];
 	public static Image2D jumpAnimation[] = new Image2D[4];
+	public static Image2D dieAnimation[] = new Image2D[7];
+	public static Image2D ground, hills, sky, obstacle, life, defeatImg;
 	private static Gamestate activeState;
 
 	public JumperGame(int width, int height, int scale) {
@@ -40,6 +42,15 @@ public class JumperGame extends Gameloop{
 		for(int i = 0; i < jumpAnimation.length; i++){
 			jumpAnimation[i] =  new Image2D("res/images/free_assets/adventurer/adventurer-jump-0"+i+".png");
 		}
+		for(int i = 0; i < dieAnimation.length; i++){
+			dieAnimation[i] =  new Image2D("res/images/free_assets/adventurer/adventurer-die-0"+i+".png");
+		}
+		ground =  new Image2D("res/images/ground.png");
+		hills =  new Image2D("res/images/hills.png");
+		sky =  new Image2D("res/images/clouds.png");
+		obstacle =  new Image2D("res/images/obstacle.png");
+		life  =  new Image2D("res/images/heart.png");
+		defeatImg  =  new Image2D("res/images/defeat.png");
 	}
 
 	@Override
