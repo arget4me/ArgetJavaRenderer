@@ -21,7 +21,7 @@ public class JumperGame extends Gameloop{
 	private static Gamestate activeState;
 
 	public JumperGame(int width, int height, int scale) {
-		super(width, height, scale);
+		super(width, height, scale, true);
 		globalWidth = width;
 		globalHeight = height;
 		loadContent();

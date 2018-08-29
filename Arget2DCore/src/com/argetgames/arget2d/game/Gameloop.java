@@ -29,17 +29,31 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	private int[] pixelBuffer;
 	private BufferStrategy bs;
 	protected Renderer2D renderer;
+	private boolean useSleep;
 
 	public Gameloop(int width, int height, int scale) {
 		WIDTH = width;
 		HEIGHT = height;
 		SCALE = scale;
+		init(false);
+	}
+	
+	public Gameloop(int width, int height, int scale, boolean useSleep) {
+		WIDTH = width;
+		HEIGHT = height;
+		SCALE = scale;
+		init(useSleep);
+	}
+	
+	private void init(boolean useSleep) {
+		this.useSleep = useSleep;
 		this.setSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		displayImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixelBuffer = ((DataBufferInt) displayImage.getRaster().getDataBuffer()).getData();
 		renderer = new Renderer2D(WIDTH, HEIGHT);
 		addKeyListener(Keyboard.getKeyboard());//TODO should also use process inputs so that inputs don't change during updates
 		addMouseListener(Mouse.getMouse());
+		
 	}
 	
 	public void Start(){
@@ -65,6 +79,14 @@ public abstract class Gameloop extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
+		if(useSleep)
+			loopWithSleep();
+		else
+			loopWithoutSleep();
+		
+	}
+	
+	public void loopWithoutSleep() {
 		running = true;
 		long upsTime = 1000000000/60;
 		long minRenderTime = 1000000000/90;
@@ -90,6 +112,49 @@ public abstract class Gameloop extends Canvas implements Runnable {
 				frames = 0;
 			}
 			
+		}
+	}
+	
+	private final long MS_PER_UPDATE = 1000000000/60;
+	public void loopWithSleep() {
+		running = true;
+		long previous = System.nanoTime();
+		long fpsTimer = previous;
+		double lag = 0.0;
+		int updates = 0;
+		int frames = 0;
+		while (running)
+		{
+			 long current = System.nanoTime();
+			 long elapsed = current - previous;
+			 previous = current;
+			 lag += elapsed;
+	
+			 int tick = 0;
+			 while (lag >= MS_PER_UPDATE)
+			 {
+				 update();
+				 updates++;
+				 lag -= MS_PER_UPDATE;
+				 tick++;
+			 }
+			 render();
+			 frames++;
+			 if(System.nanoTime() - fpsTimer >= 1000000000) {
+				 System.out.println("FPS: " + frames + " | UPS: " + updates);
+				 updates = 0;
+				 frames = 0;
+				 fpsTimer += 1000000000;
+			 }
+			 
+			 double wait = (previous + (MS_PER_UPDATE) - System.nanoTime())/4000000.0;
+			 //System.out.println(wait);
+			 try {
+				 if(wait > 0)
+					 Thread.sleep((long)wait);
+			 } catch (InterruptedException e) {
+				 e.printStackTrace();
+			 }
 		}
 	}
 	
