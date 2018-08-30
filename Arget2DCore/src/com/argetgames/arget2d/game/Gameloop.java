@@ -79,10 +79,13 @@ public abstract class Gameloop extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
-		if(useSleep)
-			loopWithSleep();
-		else
+		if(useSleep) {
+			//loopWithSleep();
+			//loopWithParkNanosNoCatchup();
+			loopWithParkNanos();
+		}else {
 			loopWithoutSleep();
+		}
 		
 	}
 	
@@ -115,7 +118,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		}
 	}
 	
-	private final long MS_PER_UPDATE = 1000000000/60;
+	private final long NS_PER_UPDATE = 1000000000/60;
 	public void loopWithSleep() {
 		running = true;
 		long previous = System.nanoTime();
@@ -123,6 +126,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		double lag = 0.0;
 		int updates = 0;
 		int frames = 0;
+		int tick = 0;
 		while (running)
 		{
 			 long current = System.nanoTime();
@@ -130,30 +134,103 @@ public abstract class Gameloop extends Canvas implements Runnable {
 			 previous = current;
 			 lag += elapsed;
 	
-			 int tick = 0;
-			 while (lag >= MS_PER_UPDATE)
+			 int i = 0;
+			 while (lag >= NS_PER_UPDATE)
 			 {
 				 update();
 				 updates++;
-				 lag -= MS_PER_UPDATE;
-				 tick++;
+				 lag -= NS_PER_UPDATE;
+				 i++;
+				 if(i > 1)
+					 tick++;
 			 }
-			 render();
-			 frames++;
-			 if(System.nanoTime() - fpsTimer >= 1000000000) {
-				 System.out.println("FPS: " + frames + " | UPS: " + updates);
-				 updates = 0;
-				 frames = 0;
-				 fpsTimer += 1000000000;
-			 }
-			 
-			 double wait = (previous + (MS_PER_UPDATE) - System.nanoTime())/4000000.0;
-			 //System.out.println(wait);
+			 double wait = (previous + (NS_PER_UPDATE) - System.nanoTime())/4000000.0;
 			 try {
 				 if(wait > 0)
 					 Thread.sleep((long)wait);
 			 } catch (InterruptedException e) {
 				 e.printStackTrace();
+			 }
+			 
+			 render();
+			 frames++;
+			 if(System.nanoTime() - fpsTimer >= 1000000000) {
+				 System.out.println("FPS: " + frames + " | UPS: " + updates + "| extra ticks: " + tick);
+				 updates = 0;
+				 frames = 0;
+				 tick = 0;
+				 fpsTimer += 1000000000;
+			 }
+		}
+	}
+	
+	public void loopWithParkNanos() {
+		running = true;
+		long previous = System.nanoTime();
+		long fpsTimer = previous;
+		double lag = 0.0;
+		int updates = 0;
+		int frames = 0;
+		int tick = 0;
+		while (running)
+		{
+			 long current = System.nanoTime();
+			 long elapsed = current - previous;
+			 previous = current;
+			 lag += elapsed;
+	
+			 int i = 0;
+			 while (lag >= NS_PER_UPDATE)
+			 {
+				 update();
+				 updates++;
+				 lag -= NS_PER_UPDATE;
+				 i++;
+				 if(i > 1)
+					 tick++;
+			 }
+			 
+			 render();
+			 frames++;
+			 long wait = (previous + (NS_PER_UPDATE) - System.nanoTime())/4;
+			 if(wait > 0) {
+				 java.util.concurrent.locks.LockSupport.parkNanos(wait);
+			 }
+			 if(System.nanoTime() - fpsTimer >= 1000000000) {
+				 System.out.println("FPS: " + frames + " | UPS: " + updates + "| extra ticks: " + tick);
+				 updates = 0;
+				 frames = 0;
+				 tick = 0;
+				 fpsTimer += 1000000000;
+			 }
+		}
+	}
+	
+	public void loopWithParkNanosNoCatchup() {
+		running = true;
+		long previous = System.nanoTime();
+		long fpsTimer = previous;
+		int updates = 0;
+		int frames = 0;
+		
+		while (running)
+		{
+			 update();
+			 updates++;
+			
+			 render();
+			 frames++;
+			 previous += NS_PER_UPDATE;
+			 long sleepTime = (previous - System.nanoTime());
+			 if(sleepTime > 0) {
+				 java.util.concurrent.locks.LockSupport.parkNanos(sleepTime);
+			 }
+			 
+			 if(System.nanoTime() - fpsTimer >= 1000) {
+				 System.out.println("FPS: " + frames + " | UPS: " + updates);
+				 updates = 0;
+				 frames = 0;
+				 fpsTimer += 1000000000;
 			 }
 		}
 	}
