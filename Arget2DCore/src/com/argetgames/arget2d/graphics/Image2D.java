@@ -17,6 +17,15 @@ public class Image2D {
 		load(path);
 	}
 	
+	public Image2D(Image2D src, int x, int y, int width, int height) {
+		load(src, x, y, width, height);
+	}
+	
+	/**
+	 * Load image from file. 
+	 * @TODO Implement exception handling if image can't be loaded. Fill a temporary buffer with pink. 0xFFFF00FF
+	 * @param path Relative path to file
+	 */
 	private void load(String path){
 		try {
 			img = ImageIO.read(new File(path));
@@ -26,6 +35,25 @@ public class Image2D {
 			img.getRGB(0, 0, width, height, imagePixels, 0, width);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Grabs a sub image from bigger image.
+	 * @param src Source image to grab sub image from
+	 * @param x Start x of sub image
+	 * @param y Start y of sub image
+	 * @param width Width of sub image
+	 * @param height Height of sub image
+	 */
+	private void load(Image2D src, int x, int y, int width, int height){
+		this.width = width;
+		this.height = height;
+		imagePixels = new int[this.width * this.height];
+		for(int j = 0; j < height; j++) {
+			for(int i = 0; i < width; i++) {
+				imagePixels[i + j * width] = src.getColor((x + i) + (y + j) * src.width);
+			}
 		}
 	}
 	
