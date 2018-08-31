@@ -21,6 +21,9 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public static int global_ups = 60;
+	public static boolean debug_log = true;
+	private final long NS_PER_UPDATE = 1000000000/global_ups;
 	protected final int WIDTH, HEIGHT, SCALE;
 	protected boolean running = false;
 	private Thread gameThread;
@@ -91,18 +94,14 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	
 	public void loopWithoutSleep() {
 		running = true;
-		long upsTime = 1000000000/60;
-		long minRenderTime = 1000000000/90;
 		int updates = 0, frames = 0;
-		
 		long upsTimer = System.nanoTime();
-		long renderTimer = upsTimer;
 		long secondsTimer = upsTimer;
 		
 		while(running){
-			while(System.nanoTime() - upsTimer >= upsTime){
+			while(System.nanoTime() - upsTimer >= NS_PER_UPDATE){
 				updates++;
-				upsTimer += upsTime;
+				upsTimer += NS_PER_UPDATE;
 				update();
 			}
 			frames++;
@@ -110,7 +109,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 			
 			if(System.nanoTime() - secondsTimer >= 1000000000){
 				secondsTimer += 1000000000;
-				//System.out.println("Updates: " + updates + " | Frames: " + frames + "\n");
+				if(debug_log)
+					System.out.println("FPS: " + frames + " | UPS: " + updates);
 				updates = 0;
 				frames = 0;
 			}
@@ -118,7 +118,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		}
 	}
 	
-	private final long NS_PER_UPDATE = 1000000000/60;
+
 	public void loopWithSleep() {
 		running = true;
 		long previous = System.nanoTime();
@@ -127,6 +127,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		int updates = 0;
 		int frames = 0;
 		int tick = 0;
+		double wait;
 		while (running)
 		{
 			 long current = System.nanoTime();
@@ -144,7 +145,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 				 if(i > 1)
 					 tick++;
 			 }
-			 double wait = (previous + (NS_PER_UPDATE) - System.nanoTime())/4000000.0;
+			 wait = (previous + (NS_PER_UPDATE) - System.nanoTime())/4000000.0;
 			 try {
 				 if(wait > 0)
 					 Thread.sleep((long)wait);
@@ -155,7 +156,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 			 render();
 			 frames++;
 			 if(System.nanoTime() - fpsTimer >= 1000000000) {
-				 System.out.println("FPS: " + frames + " | UPS: " + updates + "| extra ticks: " + tick);
+				 if(debug_log)
+					System.out.println("FPS: " + frames + " | UPS: " + updates + "| extra ticks: " + tick);
 				 updates = 0;
 				 frames = 0;
 				 tick = 0;
@@ -172,6 +174,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		int updates = 0;
 		int frames = 0;
 		int tick = 0;
+		long wait;
 		while (running)
 		{
 			 long current = System.nanoTime();
@@ -192,12 +195,13 @@ public abstract class Gameloop extends Canvas implements Runnable {
 			 
 			 render();
 			 frames++;
-			 long wait = (previous + (NS_PER_UPDATE) - System.nanoTime())/4;
+			 wait = (previous + (NS_PER_UPDATE) - System.nanoTime())/4;
 			 if(wait > 0) {
 				 java.util.concurrent.locks.LockSupport.parkNanos(wait);
 			 }
 			 if(System.nanoTime() - fpsTimer >= 1000000000) {
-				 System.out.println("FPS: " + frames + " | UPS: " + updates + "| extra ticks: " + tick);
+				 if(debug_log)
+					System.out.println("FPS: " + frames + " | UPS: " + updates + "| extra ticks: " + tick);
 				 updates = 0;
 				 frames = 0;
 				 tick = 0;
@@ -212,7 +216,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		long fpsTimer = previous;
 		int updates = 0;
 		int frames = 0;
-		
+		long sleepTime;
 		while (running)
 		{
 			 update();
@@ -221,13 +225,14 @@ public abstract class Gameloop extends Canvas implements Runnable {
 			 render();
 			 frames++;
 			 previous += NS_PER_UPDATE;
-			 long sleepTime = (previous - System.nanoTime());
+			 sleepTime = (previous - System.nanoTime());
 			 if(sleepTime > 0) {
 				 java.util.concurrent.locks.LockSupport.parkNanos(sleepTime);
 			 }
 			 
 			 if(System.nanoTime() - fpsTimer >= 1000) {
-				 System.out.println("FPS: " + frames + " | UPS: " + updates);
+				 if(debug_log)
+					System.out.println("FPS: " + frames + " | UPS: " + updates);
 				 updates = 0;
 				 frames = 0;
 				 fpsTimer += 1000000000;
@@ -244,9 +249,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	
 	public abstract void updateGame();
 	
-	public abstract void draw();/*{
-		
-	}*/
+	public abstract void draw();
 	
 	private void render(){
 		bs = getBufferStrategy();
@@ -266,7 +269,6 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		
 		g.dispose();
 		bs.show();
-		
 	}
 
 }
