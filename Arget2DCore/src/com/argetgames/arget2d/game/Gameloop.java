@@ -3,16 +3,13 @@ package com.argetgames.arget2d.game;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
-import com.argetgames.arget2d.graphics.Image2D;
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
-import com.argetgames.arget2d.input.Mouse.MouseButton;
 
 public abstract class Gameloop extends Canvas implements Runnable {
 
@@ -56,7 +53,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		renderer = new Renderer2D(WIDTH, HEIGHT);
 		addKeyListener(Keyboard.getKeyboard());//TODO should also use process inputs so that inputs don't change during updates
 		addMouseListener(Mouse.getMouse());
-		
+		addMouseMotionListener(Mouse.getMouse());
+		Mouse.setScale(SCALE);
 	}
 	
 	public void Start(){

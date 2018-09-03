@@ -8,6 +8,7 @@ import java.awt.event.MouseMotionListener;
 public class Mouse  implements MouseListener, MouseMotionListener{
 
 	private static Mouse mouse;
+	private int scale;
 	private Point mousePosition;
 	private Point[] mousePressPosition;
 	private Point[] mouseReleasePosition;
@@ -24,11 +25,26 @@ public class Mouse  implements MouseListener, MouseMotionListener{
 		mouseReleasePosition = new Point[3];
 		mousePressed = new boolean[3];
 		newClick = new boolean[3];
+		scale = 1;
 	}
+	
+	
 
 	public static Mouse getMouse(){
 		if(mouse == null)mouse = new Mouse();
 		return mouse;
+	}
+	
+	public static void setScale(int scale) {
+		getMouse().scale = scale;
+	}
+	
+	public static int getMouseX() {
+		return getMouse().mousePosition.x/getMouse().scale;
+	}
+	
+	public static int getMouseY() {
+		return getMouse().mousePosition.y/getMouse().scale;
 	}
 	
 	public boolean isButtonPress(MouseButton button){
