@@ -11,7 +11,7 @@ public class Main {
 	public static void main(String[] args) {
 		ImageIcon img = new ImageIcon("res/images/icon.png");
 		frame = new JFrame("Game 2: TreasureHunter");
-		game = new TreasureHunterGame(360, 240, 3);
+		game = new TreasureHunterGame(360, 240, 2);
 		frame.add(game);
 		frame.setResizable(false);
 		frame.pack();
