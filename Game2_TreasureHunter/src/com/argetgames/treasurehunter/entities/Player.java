@@ -18,7 +18,7 @@ public class Player {
 		y = startY;
 		speed = 1.5;
 	}
-	
+
 	public void setSpeed(double newSpeed) {
 		speed = newSpeed;
 	}
@@ -26,65 +26,69 @@ public class Player {
 	public double getX() {
 		return x;
 	}
-	
+
 	public double getY() {
 		return y;
 	}
-	
+
 	private void spawnProjectile(double angle) {
-		if(p == null) {
-			p = new Projectile(x, y, 10, angle, 5*32);
+		if (p == null) {
+			p = new Projectile(x, y, 30, angle, 1 * 32);
 		}
 	}
 
+	
 	public void update() {
-		if(p!= null) {
-			if(p.dead)
+		if (p != null) {
+			if (p.dead)
 				p = null;
 			else
 				p.update();
 		}
-		TreasureHunterGame.player_animation[dir].update();
+//		TreasureHunterGame.player_animation[dir].update();
+
 		int mx = Mouse.getMouseX();
 		int my = Mouse.getMouseY();
-		double dx = mx - TreasureHunterGame.globalWidth/2;
-		double dy = my - TreasureHunterGame.globalHeight/2;
+		double dx = mx - TreasureHunterGame.globalWidth / 2;
+		double dy = my - TreasureHunterGame.globalHeight / 2;
 		if (dx * dx + dy * dy > 1) {
 			double angle = Math.atan2(dy, dx);
 			double ax = speed * Math.cos(angle);
 			double ay = speed * Math.sin(angle);
-			x += ax;
-			y += ay;
-			if(Math.abs(dx) > Math.abs(dy)) {
-				if(ax < 0) {
+			if (Mouse.getMouse().isButtonPress(MouseButton.RIGHT)) {
+				x += ax;
+				y += ay;
+			}
+			if (Math.abs(dx) > Math.abs(dy)) {
+				if (ax < 0) {
 					dir = 1;
-				}else {
+				} else {
 					dir = 2;
 				}
-			}else {
-				if(ay < 0) {
+			} else {
+				if (ay < 0) {
 					dir = 3;
-				}else {
+				} else {
 					dir = 0;
 				}
 			}
-			if(Mouse.getMouse().isButtonPress(MouseButton.LEFT)) {
+			if (Mouse.getMouse().isButtonPress(MouseButton.LEFT)) {
 				spawnProjectile(angle);
 			}
 		}
 	}
 
 	public void draw(Renderer2D renderer, Camera camera) {
-		if(p != null) {
+		if (p != null) {
 			p.draw(renderer, camera);
 		}
-		
+
 		Image2D frame = TreasureHunterGame.player_animation[dir].getCurrentFrame();
-		if(camera != null) {
-			renderer.renderImage2D((int) x - frame.width/2 - (int)camera.getX(), (int) y - frame.height/2 - (int)camera.getY(), frame);
-		}
-		else
-			renderer.renderImage2D((int) x - frame.width/2, (int) y - frame.height/2, frame);
+		if (camera != null) {
+			renderer.renderImage2D((int) x - frame.width / 2 - (int) camera.getX(),
+					(int) y - frame.height / 2 - (int) camera.getY(), frame);
+		} else
+			renderer.renderImage2D((int) x - frame.width / 2, (int) y - frame.height / 2, frame);
 	}
 
 }

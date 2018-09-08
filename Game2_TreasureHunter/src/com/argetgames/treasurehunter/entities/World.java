@@ -22,7 +22,7 @@ public class World {
 	private void fillRandom() {
 		for(int i = 0; i < ground.length; i++) {
 			int color = 0xFF000000;
-			color |= (i % 0xFF) << 16;
+			color |= ((i*20) % 0xFF) << 16;
 			color |= ((i*i + 50) % 0xFF) << 8;
 			color |= ((i*4 + 25) % 0xFF);
 			
