@@ -1,7 +1,6 @@
 package com.argetgames.treasurehunter.server;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.JList;
@@ -10,11 +9,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
 import javax.swing.text.DefaultCaret;
-
-import org.eclipse.wb.swing.FocusTraversalOnArray;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JRadioButton;
-import javax.swing.JLabel;
 
 public class Window extends JPanel {
 
@@ -30,7 +24,7 @@ public class Window extends JPanel {
 	
 	public Window() {
 		setSize(new Dimension(550, 450));
-		setPreferredSize(new Dimension(550, 450));
+		setPreferredSize(new Dimension(600, 450));
 		setMinimumSize(new Dimension(550, 450));
 		setBackground(Color.LIGHT_GRAY);
 		setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
@@ -44,11 +38,10 @@ public class Window extends JPanel {
 		clients = new JList();
 		scrollPane_2.setViewportView(clients);
 		clients.setBorder(null);
-		setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{clients}));
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		scrollPane.setBounds(285, 11, 255, 281);
+		scrollPane.setBounds(285, 11, 305, 281);
 		add(scrollPane);
 		
 		connectionArea = new JTextArea();
@@ -61,7 +54,7 @@ public class Window extends JPanel {
 		
 		scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		scrollPane_1.setBounds(10, 303, 530, 136);
+		scrollPane_1.setBounds(10, 303, 580, 136);
 		add(scrollPane_1);
 		
 		dataArea = new JTextArea();

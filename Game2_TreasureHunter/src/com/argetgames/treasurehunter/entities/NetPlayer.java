@@ -16,6 +16,10 @@ public class NetPlayer {
 	private long time;
 	
 	public boolean drop = false;
+	public Projectile p;
+	public int numProjectiles = 0;
+	
+	public boolean hasHit = false;
 	
 	public NetPlayer(int ID, double startX, double startY) {
 		x = netX = startX;
@@ -66,6 +70,10 @@ public class NetPlayer {
 	}
 	
 	public void draw(Renderer2D renderer, Camera camera) {
+		if (numProjectiles > 0) {
+			p.draw(renderer, camera);
+		}
+		
 		Image2D frame = TreasureHunterGame.player_animation[dir].getCurrentFrame();
 		renderer.renderImage2D((int)getX() - (int)camera.getX(), (int)getY() - (int)camera.getY(), getWidth(), getHeight(), frame);
 		renderer.fillRect((int)getX() - (int)camera.getX(), (int)getY() - (int)camera.getY(), getWidth(), getHeight(), 0x88FFFF00);

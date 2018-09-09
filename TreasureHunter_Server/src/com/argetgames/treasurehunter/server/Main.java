@@ -110,7 +110,7 @@ public class Main {
 					if (!contains) {
 						temp.ID = nextID++;
 						clients.add(temp);
-						w.connectionArea.append(temp.address.getHostAddress() + " : " + temp.port + "\n");
+						w.connectionArea.append("Client connected: " + temp.address.getHostAddress() + " : " + temp.port + "\n");
 						DefaultListModel dlm = new DefaultListModel();
 						for (int i = 0; i < clients.size(); i++) {
 							Client c = clients.get(i);
