@@ -64,8 +64,6 @@ public class Player {
 	}
 	public void checkCollision(int platforms[]) {
 		for(int i = 0 ; i < platforms.length ; i++) {
-//			System.out.println(platforms[i]);
-//			renderer.fillRect(i*(100+50)-mapScroll, platforms[i]*50+50, 100, 20, 0xFFFF00FF);
 			if(xPos > i*(100+50) && xPos < i*(100+50) + 100) {
 				if(yPos + 25 > platforms[i]*50+50 && yPos + 25< platforms[i]*50+50 + 20) {
 					vel_y = 0;

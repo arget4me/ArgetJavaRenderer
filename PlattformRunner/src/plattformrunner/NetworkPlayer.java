@@ -8,8 +8,8 @@ import com.argetgames.arget2d.input.Keyboard;
 import plattformrunner.NetworkController.NetworkKey;
 
 public class NetworkPlayer {
-	double xPos;
-	double yPos;
+	public double xPos;
+	public double yPos;
 	boolean jumping = false;
 	boolean  falling = false;
 	private double jumpHeight = 100.0;
@@ -41,9 +41,6 @@ public class NetworkPlayer {
 		if(!jumping) {
 			fall();
 		}
-//		if(Keyboard.getKey(KeyEvent.VK_ENTER)) {
-//			startJump();
-//		}
 		
 	}
 	private void jump(){
@@ -62,8 +59,6 @@ public class NetworkPlayer {
 	}
 	public void checkCollision(int platforms[]) {
 		for(int i = 0 ; i < platforms.length ; i++) {
-//			System.out.println(platforms[i]);
-//			renderer.fillRect(i*(100+50)-mapScroll, platforms[i]*50+50, 100, 20, 0xFFFF00FF);
 			if(xPos > i*(100+50) && xPos < i*(100+50) + 100) {
 				if(yPos + 25 > platforms[i]*50+50 && yPos + 25< platforms[i]*50+50 + 20) {
 					vel_y = 0;

@@ -1,5 +1,6 @@
 package plattformrunner;
 
+import com.argetgames.arget2d.game.Gameloop;
 
 public class NetworkController {
 
@@ -18,7 +19,7 @@ public class NetworkController {
 	int i = 0;
 	
 	public void registerInput(String msg){
-		i++;
+		
 		String[] parts = msg.split(",");
 		if(parts.length >= 4){
 			int left = Integer.parseInt(parts[1]);
@@ -33,8 +34,11 @@ public class NetworkController {
 
 			if(jump == 1) JUMP = true;
 			else JUMP = false;
-			if(i % 30 == 0)
-				System.out.println("Left: " + LEFT + ", RIGHT: " + RIGHT + ", JUMP: " + JUMP);
+			if(PlattformGame.debug_log) {
+				i++;
+				if(i % 30 == 0)
+					System.out.println("Left: " + LEFT + ", RIGHT: " + RIGHT + ", JUMP: " + JUMP);
+			}
 		}
 	}
 	
