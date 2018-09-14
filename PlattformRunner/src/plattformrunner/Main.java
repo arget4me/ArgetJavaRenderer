@@ -9,13 +9,15 @@ public class Main {
 	private static JFrame frame;
 
 	public static void main(String[] args) {
-		frame = new JFrame("PlattformRunner");
-		boolean useSleep = false;
-		if(args.length > 0) {
-			if(args[0].equals("useSleep"))
-				useSleep = true;
+		frame = new JFrame("PlatformRunner");
+		boolean startServer = false;
+		if(args.length >= 1){
+			if(args[0].equals("startServer")){
+				startServer = true;
+				frame.setTitle("PlatformServer");
+			}
 		}
-		game = new PlattformGame(360, 240, 2);
+		game = new PlattformGame(360, 240, 1, startServer);
 		frame.add(game);
 		frame.setResizable(false);
 		frame.pack();

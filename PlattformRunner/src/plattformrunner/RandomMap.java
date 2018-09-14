@@ -1,6 +1,7 @@
 package plattformrunner;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Random;
 
 import com.argetgames.arget2d.graphics.Image2D;
@@ -11,6 +12,7 @@ public class RandomMap extends Map {
 	private Image2D background = new Image2D("res/images/background.png");
 	private Image2D background2 = new Image2D("res/images/backgroundMountains.png");
 	public int mapScroll = 0;
+	private NetworkPlayer p, p2;
 	public RandomMap() {
 		platforms = new int[50];
 		generatePlatform();
@@ -20,8 +22,10 @@ public class RandomMap extends Map {
 		for(int i = 0 ; i < platforms.length ; i++) {
 			platforms[i] = r.nextInt(3);	
 		}		
-		p = new Player(0,platforms[0]*50+50, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE);
-		p2 = new Player(0,platforms[0]*50+50, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W);
+		//p = new Player(0,platforms[0]*50+50, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE);
+		//p2 = new Player(0,platforms[0]*50+50, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W);
+		p = new NetworkPlayer(0,platforms[0]*50+50);
+		p2 = new NetworkPlayer(0,platforms[0]*50+50);
 	}
 	public void draw(Renderer2D renderer) {
 		renderer.renderImage2D((-mapScroll/4)%background.width, 0, background);
@@ -36,10 +40,13 @@ public class RandomMap extends Map {
 		p.draw(renderer, mapScroll);
 		p2.draw(renderer, mapScroll);
 	}
-	public void update() {
-		p.update();
+	public void update(ArrayList<Client> clients) {
+		if(clients.size() < 1)
+			return;
+		p.update(clients.get(0).controller);
 		p.checkCollision(platforms);
-		p2.update();
+		if(clients.size() >= 2)
+			p2.update(clients.get(1).controller);
 		p2.checkCollision(platforms);
 		if(p.xPos>PlattformGame.globalWidth*2/3 + mapScroll) {
 			mapScroll+=2;
