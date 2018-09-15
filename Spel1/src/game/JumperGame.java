@@ -20,8 +20,8 @@ public class JumperGame extends Gameloop{
 	public static Image2D ground, hills, sky, obstacle, life, defeatImg;
 	private static Gamestate activeState;
 
-	public JumperGame(int width, int height, int scale, boolean useSleep) {
-		super(width, height, scale, useSleep);
+	public JumperGame(int width, int height, int scale) {
+		super(width, height, scale);
 		globalWidth = width;
 		globalHeight = height;
 		loadContent();

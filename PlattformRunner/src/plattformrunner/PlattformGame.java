@@ -30,7 +30,7 @@ public class PlattformGame extends Gameloop {
 	private InetAddress serverAddress = null;
 
 	public PlattformGame(int width, int height, int scale, boolean startServer) {
-		super(width, height, scale, false);
+		super(width, height, scale);
 		globalWidth = WIDTH;
 		globalHeight = HEIGHT;
 		loadingImg = new Image2D("res/images/loading.png");
