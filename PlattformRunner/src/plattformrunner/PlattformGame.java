@@ -155,17 +155,17 @@ public class PlattformGame extends Gameloop {
 					String msg;
 					if (loadingDone) {
 						msg = "CONTROLLERS";
-						if (Keyboard.getKey(KeyEvent.VK_LEFT))
+						if (Keyboard.getKey(KeyEvent.VK_LEFT) || Keyboard.getKey(KeyEvent.VK_A))
 							msg += ",1";
 						else
 							msg += ",0";
 
-						if (Keyboard.getKey(KeyEvent.VK_RIGHT))
+						if (Keyboard.getKey(KeyEvent.VK_RIGHT) || Keyboard.getKey(KeyEvent.VK_D))
 							msg += ",1";
 						else
 							msg += ",0";
 
-						if (Keyboard.getKey(KeyEvent.VK_UP))
+						if (Keyboard.getKey(KeyEvent.VK_UP) || Keyboard.getKey(KeyEvent.VK_W))
 							msg += ",1,";
 						else
 							msg += ",0,";

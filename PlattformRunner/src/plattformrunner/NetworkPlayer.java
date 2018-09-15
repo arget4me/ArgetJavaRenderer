@@ -53,7 +53,7 @@ public class NetworkPlayer {
 			xPos+=2 + speed;
 		}
 		if(controller.get(NetworkKey.LEFT)) {
-			xPos-=2 + speed;
+			xPos-=1;
 		}
 		jump();
 		if(!jumping) {
