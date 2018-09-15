@@ -82,8 +82,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	public void run() {
 		if(useSleep) {
 			//loopWithSleep();
-			//loopWithParkNanosNoCatchup();
-			loopWithParkNanos();
+			loopWithParkNanosNoCatchup(); //This is new default
+			//loopWithParkNanos();
 		}else {
 			loopWithoutSleep();
 		}
@@ -209,6 +209,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	}
 	
 	public void loopWithParkNanosNoCatchup() {
+		if(debug_log)
+			System.out.println("loopParkNanos()");
 		running = true;
 		long previous = System.nanoTime();
 		long fpsTimer = previous;
@@ -222,18 +224,18 @@ public abstract class Gameloop extends Canvas implements Runnable {
 			
 			 render();
 			 frames++;
+			 if(debug_log) {
+				 if(System.nanoTime() - fpsTimer >= 1000) {
+					 System.out.println("FPS: " + frames + " | UPS: " + updates);
+					 updates = 0;
+					 frames = 0;
+					 fpsTimer += 1000000000;
+				 }
+			 }
 			 previous += NS_PER_UPDATE;
 			 sleepTime = (previous - System.nanoTime());
-			 if(sleepTime > 0) {
+			 if(sleepTime > 1) {
 				 java.util.concurrent.locks.LockSupport.parkNanos(sleepTime);
-			 }
-			 
-			 if(System.nanoTime() - fpsTimer >= 1000) {
-				 if(debug_log)
-					System.out.println("FPS: " + frames + " | UPS: " + updates);
-				 updates = 0;
-				 frames = 0;
-				 fpsTimer += 1000000000;
 			 }
 		}
 	}
