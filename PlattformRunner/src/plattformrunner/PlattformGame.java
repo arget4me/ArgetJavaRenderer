@@ -50,6 +50,8 @@ public class PlattformGame extends Gameloop {
 			handleClients = new Thread(() -> handleClients());
 			// handleClients.start();
 		}
+		
+		
 		listen = new Thread(() -> listen());
 		if (startServer)
 			loadingDone = true;
@@ -140,6 +142,11 @@ public class PlattformGame extends Gameloop {
 			}
 		}
 	}
+	
+	
+	
+	
+	
 
 	private void sendToServer() {
 		Thread t = new Thread(new Runnable() {
