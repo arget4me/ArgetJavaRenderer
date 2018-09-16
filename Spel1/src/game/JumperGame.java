@@ -2,6 +2,8 @@ package game;
 
 import com.argetgames.arget2d.game.Gameloop;
 import com.argetgames.arget2d.graphics.Image2D;
+import com.argetgames.arget2d.input.Mouse;
+import com.argetgames.arget2d.input.Mouse.MouseButton;
 
 import game.gamestates.DefeatState;
 import game.gamestates.Gamestate;
@@ -11,7 +13,6 @@ public class JumperGame extends Gameloop{
 	boolean mousePress = false;
 	public static PlayState play;
 	public static DefeatState defeat;
-	private static int globalWidth, globalHeight;
 	
 	public static Image2D runAnimation[] = new Image2D[6];
 	public static Image2D fallAnimation[] = new Image2D[2];
@@ -22,13 +23,11 @@ public class JumperGame extends Gameloop{
 
 	public JumperGame(int width, int height, int scale) {
 		super(width, height, scale);
-		globalWidth = width;
-		globalHeight = height;
 		loadContent();
-		play = new PlayState(width, height);
-		defeat = new DefeatState(width, height, 0);
+		play = new PlayState();
+		defeat = new DefeatState(0);
 		setState(play);
-		renderer.useAlpha(true);
+
 	}
 	
 	private void loadContent(){
@@ -56,20 +55,21 @@ public class JumperGame extends Gameloop{
 	@Override
 	public void updateGame() {
 		activeState.update();
-		
 	}
 	
 	public static void setState(Gamestate state) {
+		Mouse.getMouse().clearButtons();
 		activeState = state;
 	}
 
 	@Override
 	public void draw() {
+		renderer.useAlpha(true);
 		activeState.draw(renderer);
 	}
 
 	public static void resetPlaystate() {
-		play = new PlayState(globalWidth, globalHeight);
+		play = new PlayState();
 		setState(play);
 	}
 	

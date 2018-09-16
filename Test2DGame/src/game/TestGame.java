@@ -14,7 +14,7 @@ public class TestGame extends Gameloop{
 	boolean mousePress = false;
 
 	public TestGame(int width, int height, int scale) {
-		super(width, height, scale);
+		super(width, height, scale, true);
 		Image2D.test = new Image2D("res/images/test.png");
 		// TODO Auto-generated constructor stub
 	}

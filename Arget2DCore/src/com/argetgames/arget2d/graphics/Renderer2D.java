@@ -11,6 +11,14 @@ public class Renderer2D {
 		HEIGHT = height;
 		pixels = new int[WIDTH * HEIGHT];
 	}
+	
+	public int getWidth() {
+		return WIDTH;
+	}
+
+	public int getHeight() {
+		return HEIGHT;
+	}
 
 	/**
 	 * Blends two colors together. Alpha determined by the new color.
@@ -161,4 +169,5 @@ public class Renderer2D {
 		}
 	}
 
+	
 }

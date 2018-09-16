@@ -4,18 +4,18 @@ import java.awt.event.KeyEvent;
 
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Keyboard;
+import com.argetgames.arget2d.input.Mouse;
+import com.argetgames.arget2d.input.Mouse.MouseButton;
 
 import game.JumperGame;
+import game.Main;
 
 public class DefeatState extends Gamestate {
 
 	private int score;
-	private int displayWidth, displayHeight;
 	
-	public DefeatState(int displayWidth, int displayHeight, int score) {
+	public DefeatState(int score) {
 		this.score = score;
-		this.displayWidth = displayWidth;
-		this.displayHeight = displayHeight;
 	}
 	
 	@Override
@@ -25,6 +25,10 @@ public class DefeatState extends Gamestate {
 
 	@Override
 	public void update() {
+		if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE)){
+			Main.frame = Main.game.toggleFullscreen(Main.frame);
+			Main.game.play.calculateScale();
+		}
 		if(Keyboard.getKey(KeyEvent.VK_ESCAPE)) {
 			JumperGame.resetPlaystate();
 		}
@@ -37,15 +41,15 @@ public class DefeatState extends Gamestate {
 	@Override
 	public void draw(Renderer2D renderer) {
 		JumperGame.play.draw(renderer);
-		renderer.fillRect(0, 0, displayWidth, displayHeight, 0xDD000000);
+		renderer.fillRect(0, 0, JumperGame.globalWidth, JumperGame.globalHeight, 0xDD000000);
 		int size = 16;
 		for(int i = 0; i < score; i++) {
-			int x = (i * size) % (displayWidth - size);
-			int y = (i * size) / (displayWidth - size);
-			renderer.renderImage2D(x % (displayWidth - size), y * size % (displayHeight - size), 15, 15, JumperGame.obstacle);
+			int x = (i * size) % (JumperGame.globalWidth - size);
+			int y = (i * size) / (JumperGame.globalWidth - size);
+			renderer.renderImage2D(x % (JumperGame.globalWidth - size), y * size % (JumperGame.globalWidth - size), 15, 15, JumperGame.obstacle);
 		}
-		renderer.fillRect(0, 0, displayWidth, displayHeight, 0x44000000);
-		renderer.renderImage2D(0, 0, JumperGame.defeatImg);
+		renderer.fillRect(0, 0, JumperGame.globalWidth, JumperGame.globalWidth, 0x44000000);
+		renderer.renderImage2D(0, 0, JumperGame.globalWidth, JumperGame.globalHeight, JumperGame.defeatImg);
 	}
 
 }

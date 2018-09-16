@@ -9,14 +9,17 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.argetgames.arget2d.game.Gameloop;
 import com.argetgames.arget2d.graphics.Image2D;
+import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Keyboard;
+import com.argetgames.arget2d.input.Mouse;
+import com.argetgames.arget2d.input.Mouse.MouseButton;
 
 public class PlattformGame extends Gameloop {
-	public static int globalWidth, globalHeight;
 	private RandomMap m = new RandomMap();
 	private Image2D loadingImg;
 
@@ -31,8 +34,6 @@ public class PlattformGame extends Gameloop {
 
 	public PlattformGame(int width, int height, int scale, boolean startServer) {
 		super(width, height, scale);
-		globalWidth = WIDTH;
-		globalHeight = HEIGHT;
 		loadingImg = new Image2D("res/images/loading.png");
 		this.startServer = startServer;
 		debug_log = false;
@@ -214,18 +215,21 @@ public class PlattformGame extends Gameloop {
 			sendToClients();
 		} else {
 			sendToServer();
+			if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE))
+				Main.frame = toggleFullscreen(Main.frame);
 		}
 		// send(data);
 	}
 
 	@Override
 	public void draw() {
+		if(!this.isFocusOwner())return;
 		if (loadingDone) {
 			renderer.useAlpha(true);
 			m.draw(renderer);
 		} else {
 			renderer.useAlpha(true);
-			renderer.renderImage2D(0, 0, loadingImg);
+			renderer.renderImage2D(0, 0, globalWidth, globalHeight, loadingImg);
 		}
 	}
 

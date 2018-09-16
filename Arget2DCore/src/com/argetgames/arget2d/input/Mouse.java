@@ -21,14 +21,23 @@ public class Mouse  implements MouseListener, MouseMotionListener{
 	
 	private Mouse() {
 		mousePosition = new Point(0, 0);
-		mousePressPosition = new Point[3];
-		mouseReleasePosition = new Point[3];
-		mousePressed = new boolean[3];
-		newClick = new boolean[3];
+		mousePressPosition = new Point[MouseButton.values().length];
+		mouseReleasePosition = new Point[MouseButton.values().length];
+		mousePressed = new boolean[MouseButton.values().length];
+		newClick = new boolean[MouseButton.values().length];
+		for(int i = 0; i < MouseButton.values().length; i++){
+			newClick[i] = false;
+			mousePressed[i] = false;
+		}
 		scale = 1;
 	}
 	
-	
+	public void clearButtons(){
+		for(int i = 0; i < MouseButton.values().length; i++){
+			newClick[i] = false;
+			mousePressed[i] = false;
+		}
+	}
 
 	public static Mouse getMouse(){
 		if(mouse == null)mouse = new Mouse();

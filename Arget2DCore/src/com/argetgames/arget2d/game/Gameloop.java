@@ -7,6 +7,8 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+import javax.swing.JFrame;
+
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
@@ -21,6 +23,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	public static int global_ups = 60;
 	public static boolean debug_log = true;
 	private final long NS_PER_UPDATE = 1000000000 / global_ups;
+	public static int globalWidth, globalHeight;
 	protected final int WIDTH, HEIGHT, SCALE;
 	protected boolean running = false;
 	private Thread gameThread;
@@ -47,10 +50,12 @@ public abstract class Gameloop extends Canvas implements Runnable {
 
 	private void init(boolean useSleep) {
 		this.useSleep = useSleep;
-		this.setSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		displayImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixelBuffer = ((DataBufferInt) displayImage.getRaster().getDataBuffer()).getData();
 		renderer = new Renderer2D(WIDTH, HEIGHT);
+		globalWidth = renderer.getWidth();
+		globalHeight = renderer.getHeight();
 		addKeyListener(Keyboard.getKeyboard());// TODO should also use process inputs so that inputs don't change during
 												// updates
 		addMouseListener(Mouse.getMouse());
@@ -173,11 +178,58 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		for (int i = 0; i < pixelBuffer.length; i++) {
 			pixelBuffer[i] = renderer.getPixel(i);
 		}
-		// g.drawImage(displayImage, 0, 0, getWidth(), getHeight(), null);
-		g.drawImage(displayImage, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
+		//@NOTE: This is to support full screen
+		g.drawImage(displayImage, 0, 0, getWidth(), getHeight(), null); 
+//		g.drawImage(displayImage, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
 
 		g.dispose();
 		bs.show();
+	}
+	
+	public JFrame toggleFullscreen(JFrame frame){
+		if(frame == null)
+			return null;
+		
+		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+		boolean resizable = frame.isResizable();
+		int closeOperations = frame.getDefaultCloseOperation();		
+		
+		/** Must delete old frame and create a new to toggle undecorated. */
+		frame.dispose();
+		frame = null;
+		frame =  new JFrame();
+		/**@Note: can't be visible before setting full screen **/
+		frame.setVisible(false);
+		
+		
+		if(!isFullscreen){
+			if(debug_log)
+				System.out.println("Fullscreen");
+			frame.setUndecorated(true);
+			frame.setVisible(true);
+			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			setPreferredSize(frame.getSize());
+		}else {
+			if(debug_log)
+				System.out.println("Quit Fullscreen");
+			frame.setUndecorated(false);
+			frame.setVisible(true);
+			setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		}
+		
+		frame.add(this);
+		frame.setDefaultCloseOperation(closeOperations);
+		frame.setResizable(resizable);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		displayImage = new BufferedImage(getWidth()/SCALE, getHeight()/SCALE, BufferedImage.TYPE_INT_RGB);
+		pixelBuffer = ((DataBufferInt) displayImage.getRaster().getDataBuffer()).getData();
+		renderer = new Renderer2D(getWidth()/SCALE, getHeight()/SCALE);
+		globalWidth = renderer.getWidth();
+		globalHeight = renderer.getHeight();
+		
+		requestFocus();
+		return frame;
 	}
 	
 	/* Gameloop test that aren't used anymore */

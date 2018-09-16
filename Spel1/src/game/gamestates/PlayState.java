@@ -12,7 +12,6 @@ public class PlayState extends Gamestate {
 	
 	private Player player;
 	private Obstacle obst, obst2;
-	private int displayWidth, displayHeight;
 	private int groundY;
 	private int obstH;
 	private int obstW;
@@ -29,24 +28,27 @@ public class PlayState extends Gamestate {
 	int imgGroundY;
 	
 	
-	public PlayState(int displayWidth, int displayHeight){
-		this.displayWidth = displayWidth;
-		this.displayHeight = displayHeight;
+	public PlayState(){
 		init();
 	}
 
+	public void calculateScale(){
+		groundY = (int)(JumperGame.globalHeight * (9/10.0));
+		hillsY = JumperGame.globalHeight - JumperGame.ground.height - JumperGame.hills.height +2;
+		imgGroundY = JumperGame.globalHeight - JumperGame.ground.height;
+	}
+	
 	@Override
 	protected void init() {
-		groundY = (int)(displayHeight * (9/10.0));
+		calculateScale();
 		obstH = 60;
 		obstW = 40;
-		distBetweenObstacles = displayWidth;
-		player = new Player((int)(displayWidth * (1/8.0)), groundY - 37, 37, 37);
-		obst = new Obstacle(displayWidth, groundY - obstH, obstW, obstH,  4.0);
+		distBetweenObstacles = JumperGame.globalWidth;
+		player = new Player((int)(JumperGame.globalWidth * (1/8.0)), groundY - 37, 37, 37);
+		obst = new Obstacle(JumperGame.globalWidth, groundY - obstH, obstW, obstH,  4.0);
 		obst2 = new Obstacle(obst.getRightX()+distBetweenObstacles, groundY - (obstH*2), 40, obstH*2,  4.0);
 		//obst2 = new Obstacle((int)(displayWidth*1.5) + 10, groundY - (obstH*2), obstW, obstH*2, 4.0);
-		hillsY = displayHeight - JumperGame.ground.height - JumperGame.hills.height +2;
-		imgGroundY = displayHeight - JumperGame.ground.height;
+		
 	}
 	
 	private void handleObstacles() {
