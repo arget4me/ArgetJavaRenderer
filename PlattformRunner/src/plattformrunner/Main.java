@@ -19,7 +19,7 @@ public class Main {
 				frame.setTitle("PlatformServer");
 			}
 		}
-		game = new PlattformGame(360, 240, scale, startServer);
+		game = new PlattformGame(480, 270, scale, startServer);
 		frame.add(game);
 		frame.setResizable(false);
 		frame.pack();

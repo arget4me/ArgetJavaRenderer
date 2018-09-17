@@ -232,6 +232,47 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		return frame;
 	}
 	
+	public JFrame toggleStretchFullscreen(JFrame frame){
+		if(frame == null)
+			return null;
+		
+		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+		boolean resizable = frame.isResizable();
+		int closeOperations = frame.getDefaultCloseOperation();		
+		
+		/** Must delete old frame and create a new to toggle undecorated. */
+		frame.dispose();
+		frame = null;
+		frame =  new JFrame();
+		/**@Note: can't be visible before setting full screen **/
+		frame.setVisible(false);
+		
+		
+		if(!isFullscreen){
+			if(debug_log)
+				System.out.println("Fullscreen");
+			frame.setUndecorated(true);
+			frame.setVisible(true);
+			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			setPreferredSize(frame.getSize());
+		}else {
+			if(debug_log)
+				System.out.println("Quit Fullscreen");
+			frame.setUndecorated(false);
+			frame.setVisible(true);
+			setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		}
+		
+		frame.add(this);
+		frame.setDefaultCloseOperation(closeOperations);
+		frame.setResizable(resizable);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		
+		requestFocus();
+		return frame;
+	}
+	
 	/* Gameloop test that aren't used anymore */
 
 //	public void loopWithSleep() {

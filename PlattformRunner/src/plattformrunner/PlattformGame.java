@@ -216,9 +216,8 @@ public class PlattformGame extends Gameloop {
 		} else {
 			sendToServer();
 			if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE))
-				Main.frame = toggleFullscreen(Main.frame);
+				Main.frame = toggleStretchFullscreen(Main.frame);
 		}
-		// send(data);
 	}
 
 	@Override
