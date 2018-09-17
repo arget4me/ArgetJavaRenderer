@@ -35,12 +35,14 @@ public class RandomMap extends Map {
 	}
 
 	public void draw(Renderer2D renderer) {
-		renderer.renderImage2D((-mapScroll / 4) % background.width, 0, background);
-		renderer.renderImage2D((-mapScroll / 4) % background.width + background.width, 0, background);
+		int bgSkyWidth = background.width / background.height * PlattformGame.globalHeight;
+		renderer.renderImage2D((-mapScroll / 4) % bgSkyWidth, 0, bgSkyWidth, PlattformGame.globalHeight, background);
+		renderer.renderImage2D((-mapScroll / 4) % bgSkyWidth + bgSkyWidth, 0, bgSkyWidth, PlattformGame.globalHeight, background);
 
-		renderer.renderImage2D((-mapScroll / 2) % background2.width, 0, background2.width, PlattformGame.globalHeight,
+		int bgHillWidth = background2.width / background2.height * PlattformGame.globalHeight;
+		renderer.renderImage2D((-mapScroll / 2) % bgHillWidth, 0, bgHillWidth, PlattformGame.globalHeight,
 				background2);
-		renderer.renderImage2D((-mapScroll / 2) % background2.width + background2.width, 0, background2.width,
+		renderer.renderImage2D((-mapScroll / 2) % bgHillWidth + bgHillWidth, 0, bgHillWidth,
 				PlattformGame.globalHeight, background2);
 		for (int i = 0; i < platforms.length; i++) {
 			renderer.fillRect(i * (100 + 50) - mapScroll, platforms[i]*  50  + 100, 100, 5, 0xFF432002);
