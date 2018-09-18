@@ -61,7 +61,6 @@ public abstract class Gameloop extends Canvas implements Runnable {
 												// updates
 		addMouseListener(Mouse.getMouse());
 		addMouseMotionListener(Mouse.getMouse());
-		Mouse.setScale(SCALE);
 	}
 
 	public void Start() {
@@ -103,7 +102,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		long fpsTimer = previous;
 		int frames = 0;
 		long sleepTime;
-		init();
+		create();
 		while (running) {
 			update();
 
@@ -129,7 +128,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		int updates = 0, frames = 0;
 		long upsTimer = System.nanoTime();
 		long secondsTimer = upsTimer;
-		init();
+		create();
 		while (running) {
 			while (System.nanoTime() - upsTimer >= NS_PER_UPDATE) {
 				updates++;
@@ -154,8 +153,9 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		updateGame();
 	}
 
-	private void init() {
+	private void create() {
 		requestFocus();
+		Mouse.setScale(getWidth()/(double)WIDTH, getHeight()/(double)HEIGHT);
 		onCreate();
 	}
 
@@ -231,6 +231,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		renderer = new Renderer2D(getWidth()/SCALE, getHeight()/SCALE);
 		globalWidth = renderer.getWidth();
 		globalHeight = renderer.getHeight();
+		Mouse.setScale(SCALE, SCALE);
 		
 		requestFocus();
 		return frame;
@@ -275,6 +276,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		frame.setResizable(resizable);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
+		Mouse.setScale(getWidth()/(double)WIDTH, getHeight()/(double)HEIGHT);
 		
 		requestFocus();
 		return frame;
@@ -291,7 +293,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 //		int frames = 0;
 //		int tick = 0;
 //		double wait;
-//		init();
+//		create();
 //		while (running) {
 //			long current = System.nanoTime();
 //			long elapsed = current - previous;
@@ -337,7 +339,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 //		int frames = 0;
 //		int tick = 0;
 //		long wait;
-//		init();
+//		create();
 //		while (running) {
 //			long current = System.nanoTime();
 //			long elapsed = current - previous;

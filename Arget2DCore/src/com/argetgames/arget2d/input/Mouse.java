@@ -8,7 +8,7 @@ import java.awt.event.MouseMotionListener;
 public class Mouse  implements MouseListener, MouseMotionListener{
 
 	private static Mouse mouse;
-	private int scale;
+	private double scaleX, scaleY;
 	private Point mousePosition;
 	private Point[] mousePressPosition;
 	private Point[] mouseReleasePosition;
@@ -29,7 +29,7 @@ public class Mouse  implements MouseListener, MouseMotionListener{
 			newClick[i] = false;
 			mousePressed[i] = false;
 		}
-		scale = 1;
+		scaleX = scaleY = 1;
 	}
 	
 	public void clearButtons(){
@@ -44,16 +44,17 @@ public class Mouse  implements MouseListener, MouseMotionListener{
 		return mouse;
 	}
 	
-	public static void setScale(int scale) {
-		getMouse().scale = scale;
+	public static void setScale(double scaleX, double scaleY){
+		getMouse().scaleX = scaleX;
+		getMouse().scaleY = scaleY;
 	}
 	
 	public static int getMouseX() {
-		return getMouse().mousePosition.x/getMouse().scale;
+		return (int)(getMouse().mousePosition.x/getMouse().scaleX);
 	}
 	
 	public static int getMouseY() {
-		return getMouse().mousePosition.y/getMouse().scale;
+		return (int)(getMouse().mousePosition.y/getMouse().scaleY);
 	}
 	
 	public boolean isButtonPress(MouseButton button){
