@@ -3,6 +3,7 @@ package com.argetgames.arget2d.game;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -158,7 +159,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		onCreate();
 	}
 
-	public void onCreate() {
+	protected void onCreate() {
 	}
 
 	public abstract void updateGame();
@@ -190,6 +191,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		if(frame == null)
 			return null;
 		
+		Image icon = frame.getIconImage();
+		String title = frame.getTitle();
 		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
 		boolean resizable = frame.isResizable();
 		int closeOperations = frame.getDefaultCloseOperation();		
@@ -200,7 +203,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		frame =  new JFrame();
 		/**@Note: can't be visible before setting full screen **/
 		frame.setVisible(false);
-		
+		frame.setTitle(title);
+		if(icon != null)frame.setIconImage(icon);
 		
 		if(!isFullscreen){
 			if(debug_log)
@@ -236,6 +240,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		if(frame == null)
 			return null;
 		
+		Image icon = frame.getIconImage();
+		String title = frame.getTitle();
 		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
 		boolean resizable = frame.isResizable();
 		int closeOperations = frame.getDefaultCloseOperation();		
@@ -246,7 +252,8 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		frame =  new JFrame();
 		/**@Note: can't be visible before setting full screen **/
 		frame.setVisible(false);
-		
+		frame.setTitle(title);
+		if(icon != null)frame.setIconImage(icon);
 		
 		if(!isFullscreen){
 			if(debug_log)

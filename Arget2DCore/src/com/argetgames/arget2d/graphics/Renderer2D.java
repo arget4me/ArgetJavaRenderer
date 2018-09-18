@@ -5,11 +5,14 @@ public class Renderer2D {
 	private final int WIDTH, HEIGHT;
 	private int[] pixels;
 	private boolean blending = false;
+	public Camera2D camera;
+	private boolean applyCamera = true;
 
 	public Renderer2D(int width, int height) {
 		WIDTH = width;
 		HEIGHT = height;
 		pixels = new int[WIDTH * HEIGHT];
+		camera = new Camera2D(0, 0);
 	}
 	
 	public int getWidth() {
@@ -67,9 +70,15 @@ public class Renderer2D {
 	 * @param color Color to render the pixel. TODO: make a color class that handles mixing and alpha.
 	 */
 	private void renderPixel(int x, int y, int color){
+		if(applyCamera){
+			
+			x += camera.getOffsetX();
+			y += camera.getOffsetY();
+		}
+		
 		if(insideBuffer(x, y)){
 			//int oldColor = pixels[x + y * WIDTH];
-			int index = x + y * WIDTH;
+			int index = (x) + (y) * WIDTH;
 			if(blending)
 				pixels[index] = blendColors(pixels[index], color);
 			else 
@@ -87,6 +96,15 @@ public class Renderer2D {
 	}
 	
 	/**
+	 * Tell the renderer if camera should be used when drawing to the renderer.
+	 * @param value True enables the camera, all positions will be offset by the camera and it's scale.
+	 * False camera wont't be used.
+	 */
+	public void useCamera(boolean value){
+		applyCamera = value;
+	}
+	
+	/**
 	 * Render a rectangle filled with color.
 	 * @param startX Top-left x-coordinate of the rectangle. 
 	 * @param startY Top-left y-coordinate of the rectangle.
@@ -95,6 +113,7 @@ public class Renderer2D {
 	 * @param color Color to fill the rectangle with.
 	 */
 	public void fillRect(int startX, int startY, int rectWidth, int rectHeight, int color){
+		
 		for(int j = 0; j < rectHeight; j++ ){
 			int y = startY + j;
 			for(int i = 0; i < rectWidth; i++ ){

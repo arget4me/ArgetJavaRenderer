@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class Image2D {
 	
@@ -34,7 +35,11 @@ public class Image2D {
 			imagePixels = new int[width * height];
 			img.getRGB(0, 0, width, height, imagePixels, 0, width);
 		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Error: Couldn't load image with path: " + path,
+                    "Error loading image!",
+                    JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	
