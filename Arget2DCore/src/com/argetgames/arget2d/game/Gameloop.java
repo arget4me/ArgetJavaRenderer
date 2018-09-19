@@ -10,6 +10,7 @@ import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 
+import com.argetgames.arget2d.graphics.Camera2D;
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
@@ -34,6 +35,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	private BufferStrategy bs;
 	protected Renderer2D renderer;
 	private boolean useSleep;
+	public static Camera2D camera;
 
 	public Gameloop(int width, int height, int scale) {
 		WIDTH = width;
@@ -55,6 +57,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		displayImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixelBuffer = ((DataBufferInt) displayImage.getRaster().getDataBuffer()).getData();
 		renderer = new Renderer2D(WIDTH, HEIGHT);
+		camera = renderer.camera;
 		globalWidth = renderer.getWidth();
 		globalHeight = renderer.getHeight();
 		addKeyListener(Keyboard.getKeyboard());// TODO should also use process inputs so that inputs don't change during

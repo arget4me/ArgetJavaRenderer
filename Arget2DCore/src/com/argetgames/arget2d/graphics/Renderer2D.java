@@ -7,6 +7,9 @@ public class Renderer2D {
 	private boolean blending = false;
 	public Camera2D camera;
 	private boolean applyCamera = true;
+	private static final int colorMask = 0xFFFF00FF;
+	private boolean applyColorMask = false;
+	
 
 	public Renderer2D(int width, int height) {
 		WIDTH = width;
@@ -24,7 +27,7 @@ public class Renderer2D {
 	}
 
 	/**
-	 * Blends two colors together. Alpha determined by the new color.
+	 * Blends two colors together. Alpha determined by the new color. Very expensive.
 	 * @param oldColor Previous color. Alpha is set to be "255 - alpha of newColor".
 	 * Format RGB. Can be in ARGB but alpha is ignored
 	 * @param newColor New color. Alpha determines blending. Format ARGB, 0xFF00FF00 gives full green.
@@ -69,7 +72,9 @@ public class Renderer2D {
 	 * @param y Pixel y-coordinate.
 	 * @param color Color to render the pixel. TODO: make a color class that handles mixing and alpha.
 	 */
+	int i = 0;
 	private void renderPixel(int x, int y, int color){
+		i++;
 		if(applyCamera){
 			
 			x += camera.getOffsetX();
@@ -79,10 +84,15 @@ public class Renderer2D {
 		if(insideBuffer(x, y)){
 			//int oldColor = pixels[x + y * WIDTH];
 			int index = (x) + (y) * WIDTH;
-			if(blending)
+			if(applyColorMask){
+				if(color != colorMask){
+					pixels[index] = (int) color;
+				}
+			} else if(blending){
 				pixels[index] = blendColors(pixels[index], color);
-			else 
+			} else { 
 				pixels[index] = (int) color;
+			}
 		}
 	}
 	
@@ -93,6 +103,14 @@ public class Renderer2D {
 	 */
 	public void useAlpha(boolean value){
 		blending = value;
+	}
+	
+	/**
+	 * Tell the renderer if color mask 0xFFFF00FF should be used. Has priority over alpha blending for performance.
+	 * @param value If color mask should be used.
+	 */
+	public void useColorMask(boolean value){
+		this.applyColorMask = value;
 	}
 	
 	/**
@@ -139,6 +157,31 @@ public class Renderer2D {
 		}
 	}
 	
+	
+	/**
+	 * Renders an image to the pixel buffer.
+	 * @param startX X-coordinate on the screen to render the image.
+	 * @param startY Y-coordinate on the screen to render the image.
+	 * @param image Image2D to render, colors are of type ARGB but alpha is only used if "useAlpha" has enabled it.
+	 * @param colorMask the color in image to be replaced by newColor.
+	 * @param newColor the color to replace maskColor in image with. 
+	*/
+	public void renderImage2D(int startX, int startY, Image2D image, int colorMask, int newColor){
+		if(image == null) return;
+		for(int j = 0; j < image.height; j++ ){
+			int y = startY + j;
+			for(int i = 0; i < image.width; i++ ){
+				int x = startX + i;
+				int color = image.getColor(i + j * image.width);
+				if(color == colorMask)
+					color = newColor;
+				renderPixel(x, y, color);
+			}
+		}
+	}
+	
+	
+	
 	/**
 	 * Renders an image to the pixel buffer.
 	 * @param startX X-coordinate on the screen to render the image.
@@ -148,6 +191,7 @@ public class Renderer2D {
 	 * @param image Image2D to render, colors are of type ARGB but alpha is only used if "useAlpha" has enabled it.
 	 */
 	public void renderImage2D(int startX, int startY, int width, int height, Image2D image){
+		if(image == null) return;
 		double wScale = image.width / (double)width;
 		double hScale = image.height / (double)height;
 		
@@ -158,6 +202,34 @@ public class Renderer2D {
 				int x = startX + i;
 				int xa = (int)(i*wScale);
 				renderPixel(x, y, image.getColor(xa + ya * image.width));
+			}
+		}
+	}
+	
+	/**
+	 * Renders an image to the pixel buffer.
+	 * @param startX X-coordinate on the screen to render the image.
+	 * @param startY Y-coordinate on the screen to render the image.
+	 * @param width The width to render the image at. This causes scaling.
+	 * @param height The height to render the image at. This causes scaling.
+	 * @param image Image2D to render, colors are of type ARGB but alpha is only used if "useAlpha" has enabled it.
+	 * @param colorMask the color in image to be replaced by newColor.
+	 * @param newColor the color to replace maskColor in image with. 
+	 */
+	public void renderImage2D(int startX, int startY, int width, int height, Image2D image, int colorMask, int newColor){
+		double wScale = image.width / (double)width;
+		double hScale = image.height / (double)height;
+		
+		for(int j = 0; j < height; j++ ){
+			int y = startY + j;
+			int ya = (int)(j*hScale);
+			for(int i = 0; i < width; i++ ){
+				int x = startX + i;
+				int xa = (int)(i*wScale);
+				int color = image.getColor(xa + ya * image.width);
+				if(color == colorMask)
+					color = newColor;
+				renderPixel(x, y, color);
 			}
 		}
 	}

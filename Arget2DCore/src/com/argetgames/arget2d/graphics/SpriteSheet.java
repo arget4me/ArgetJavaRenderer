@@ -29,11 +29,24 @@ public class SpriteSheet {
 	}
 	
 	public Image2D getSprite(int index) {
-		return sprites[index % sprites.length];
+		index %= sprites.length;
+		if(index < 0)index += sprites.length;
+		return sprites[index];
 	}
 	
 	public Image2D getSpritesheet() {
 		return sheet;
 	}
 	
+	public int getNumSprites(){
+		return sprites.length;
+	}
+
+	public int getSpriteHeight() {
+		return SPRITE_HEIGHT;
+	}
+	
+	public int getSpriteWidth() {
+		return SPRITE_WIDTH;
+	}
 }
