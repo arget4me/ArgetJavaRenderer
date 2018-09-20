@@ -1,4 +1,4 @@
-package com.argetgames.arget2d.tilemap;
+package com.argetgames.arget2d.menu;
 
 import com.argetgames.arget2d.graphics.Renderer2D;
 

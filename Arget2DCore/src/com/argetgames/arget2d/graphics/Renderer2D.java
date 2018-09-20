@@ -10,6 +10,8 @@ public class Renderer2D {
 	private static final int colorMask = 0xFFFF00FF;
 	private boolean applyColorMask = false;
 	
+	//@NOTE: Offset dimension to only render what is inside renderer.
+	private int xOffset = 0, yOffset = 0, wOffset = 0, hOffset = 0, xPadding = 0, yPadding = 0;
 
 	public Renderer2D(int width, int height) {
 		WIDTH = width;
@@ -72,17 +74,8 @@ public class Renderer2D {
 	 * @param y Pixel y-coordinate.
 	 * @param color Color to render the pixel. TODO: make a color class that handles mixing and alpha.
 	 */
-	int i = 0;
 	private void renderPixel(int x, int y, int color){
-		i++;
-		if(applyCamera){
-			
-			x += camera.getOffsetX();
-			y += camera.getOffsetY();
-		}
-		
 		if(insideBuffer(x, y)){
-			//int oldColor = pixels[x + y * WIDTH];
 			int index = (x) + (y) * WIDTH;
 			if(applyColorMask){
 				if(color != colorMask){
@@ -122,6 +115,45 @@ public class Renderer2D {
 		applyCamera = value;
 	}
 	
+	private boolean calcOffset(int startX, int startY, int rectWidth, int rectHeight){
+		int xOff = 0;
+		int yOff = 0;
+		xPadding = 0;
+		yPadding = 0;
+		if(applyCamera){
+			xOff += camera.getOffsetX();
+			yOff += camera.getOffsetY();
+		}
+		int xPad = startX + xOff;
+		int yPad = startY + yOff;
+		
+		if(xPad >= WIDTH)return false;
+		if(xPad < 0){
+			rectWidth += xPad;
+			xPadding = xPad * -1;
+			xPad = 0;
+		}
+		if(yPad >= HEIGHT)return false;
+		if(yPad < 0){
+			rectHeight += yPad;
+			yPadding = yPad * -1;
+			yPad = 0;
+		}
+		
+		if(rectHeight + yPad > HEIGHT){
+			rectHeight = HEIGHT - yPad;
+		}
+		if(rectWidth + xPad > WIDTH){
+			rectWidth = WIDTH - xPad;
+		}
+		
+		xOffset = xPad;
+		yOffset = yPad;
+		wOffset = rectWidth;
+		hOffset = rectHeight;
+		return true;
+	}
+	
 	/**
 	 * Render a rectangle filled with color.
 	 * @param startX Top-left x-coordinate of the rectangle. 
@@ -131,14 +163,37 @@ public class Renderer2D {
 	 * @param color Color to fill the rectangle with.
 	 */
 	public void fillRect(int startX, int startY, int rectWidth, int rectHeight, int color){
+		if(!calcOffset(startX, startY, rectWidth, rectHeight))return;
 		
-		for(int j = 0; j < rectHeight; j++ ){
-			int y = startY + j;
-			for(int i = 0; i < rectWidth; i++ ){
-				int x = startX + i;
+		for(int j = 0; j < hOffset; j++ ){
+			int y = yOffset + j;
+			for(int i = 0; i < wOffset; i++ ){
+				int x = xOffset + i;
 				renderPixel(x, y, color);
 			}
 		}
+	}
+	
+	/**
+	 * Render a rectangle without filled color.
+	 * @param startX Top-left x-coordinate of the rectangle. 
+	 * @param startY Top-left y-coordinate of the rectangle.
+	 * @param rectWidth Width of the rectangle from the top-left corner.
+	 * @param rectHeight Height of the rectangle from the top-left corner.
+	 * @param color The rectangle color.
+	 */
+	public void drawRect(int startX, int startY, int rectWidth, int rectHeight, int color){
+		//top line
+		fillRect(startX, startY, rectWidth, 1, color);
+		
+		//bottom line
+		fillRect(startX, startY+rectHeight-1, rectWidth, 1, color);
+		
+		//left line
+		fillRect(startX, startY+1, 1, rectHeight -2, color);
+		
+		//right line
+		fillRect(startX + rectWidth -1, startY+1, 1, rectHeight -2, color);
 	}
 	
 	/**
@@ -148,11 +203,14 @@ public class Renderer2D {
 	 * @param image Image2D to render, colors are of type ARGB but alpha is only used if "useAlpha" has enabled it.
 	 */
 	public void renderImage2D(int startX, int startY, Image2D image){
-		for(int j = 0; j < image.height; j++ ){
-			int y = startY + j;
-			for(int i = 0; i < image.width; i++ ){
-				int x = startX + i;
-				renderPixel(x, y, image.getColor(i + j * image.width));
+		if(image == null)return;
+		if(!calcOffset(startX, startY, image.width, image.height))return;
+		
+		for(int j = 0; j < hOffset; j++ ){
+			int y = yOffset + j;
+			for(int i = 0; i < wOffset; i++ ){
+				int x = xOffset + i;
+				renderPixel(x, y, image.getColor((i + xPadding) + (j + yPadding) * image.width));
 			}
 		}
 	}
@@ -168,11 +226,13 @@ public class Renderer2D {
 	*/
 	public void renderImage2D(int startX, int startY, Image2D image, int colorMask, int newColor){
 		if(image == null) return;
-		for(int j = 0; j < image.height; j++ ){
-			int y = startY + j;
-			for(int i = 0; i < image.width; i++ ){
-				int x = startX + i;
-				int color = image.getColor(i + j * image.width);
+		if(!calcOffset(startX, startY, image.width, image.height))return;
+		
+		for(int j = 0; j < hOffset; j++ ){
+			int y = yOffset + j;
+			for(int i = 0; i < wOffset; i++ ){
+				int x = xOffset + i;
+				int color = image.getColor((i + xPadding) + (j + yPadding) * image.width);
 				if(color == colorMask)
 					color = newColor;
 				renderPixel(x, y, color);
@@ -192,15 +252,17 @@ public class Renderer2D {
 	 */
 	public void renderImage2D(int startX, int startY, int width, int height, Image2D image){
 		if(image == null) return;
+		
 		double wScale = image.width / (double)width;
 		double hScale = image.height / (double)height;
+		if(!calcOffset(startX, startY, width, height))return;
 		
-		for(int j = 0; j < height; j++ ){
-			int y = startY + j;
-			int ya = (int)(j*hScale);
-			for(int i = 0; i < width; i++ ){
-				int x = startX + i;
-				int xa = (int)(i*wScale);
+		for(int j = 0; j < hOffset; j++ ){
+			int y = yOffset + j;
+			int ya = (int)((j + yPadding)*hScale);
+			for(int i = 0; i < wOffset; i++ ){
+				int x = xOffset + i;
+				int xa = (int)((i + xPadding)*wScale);
 				renderPixel(x, y, image.getColor(xa + ya * image.width));
 			}
 		}
@@ -217,15 +279,18 @@ public class Renderer2D {
 	 * @param newColor the color to replace maskColor in image with. 
 	 */
 	public void renderImage2D(int startX, int startY, int width, int height, Image2D image, int colorMask, int newColor){
+		if(image == null) return;
+		
 		double wScale = image.width / (double)width;
 		double hScale = image.height / (double)height;
+		if(!calcOffset(startX, startY, width, height))return;
 		
-		for(int j = 0; j < height; j++ ){
-			int y = startY + j;
-			int ya = (int)(j*hScale);
-			for(int i = 0; i < width; i++ ){
-				int x = startX + i;
-				int xa = (int)(i*wScale);
+		for(int j = 0; j < hOffset; j++ ){
+			int y = yOffset + j;
+			int ya = (int)((j + yPadding)*hScale);
+			for(int i = 0; i < wOffset; i++ ){
+				int x = xOffset + i;
+				int xa = (int)((i + xPadding)*wScale);
 				int color = image.getColor(xa + ya * image.width);
 				if(color == colorMask)
 					color = newColor;

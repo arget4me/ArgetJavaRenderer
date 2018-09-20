@@ -3,7 +3,6 @@ package com.argetgames.arget2d.menu;
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Mouse;
 import com.argetgames.arget2d.input.Mouse.MouseButton;
-import com.argetgames.arget2d.tilemap.Rectangle;
 
 public class Button extends Rectangle {
 

@@ -34,21 +34,13 @@ public class PlatformGame extends Gameloop {
 		fontSheet = new SpriteSheet("res/images/8bitFont.png", 8, 8);
 		textRenderer = new TextRenderer(fontSheet, " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0xFFFFFFFF);
 		tileSheet = new SpriteSheet("res/images/free_assets/SunnyLand/tileset.png", 16, 16);
-		mapEditor = new TilemapEditor(tileSheet, 120, 120);
+		mapEditor = new TilemapEditor(4000, 20, 16, 16, tileSheet);
 	}
 
 	@Override
 	public void updateGame() {
 		if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE))
 			Main.mainFrame = toggleStretchFullscreen(Main.mainFrame);
-		if (Keyboard.getKey(KeyEvent.VK_W))
-			camera.move(0, -2.5);
-		if (Keyboard.getKey(KeyEvent.VK_S))
-			camera.move(0, +2.5);
-		if (Keyboard.getKey(KeyEvent.VK_A))
-			camera.move(-2.5, 0);
-		if (Keyboard.getKey(KeyEvent.VK_D))
-			camera.move(+2.5, 0);
 		mapEditor.update();
 	}
 
@@ -59,9 +51,10 @@ public class PlatformGame extends Gameloop {
 		renderer.renderImage2D(0, 0, globalWidth, globalHeight, aspect);
 		renderer.useCamera(true);
 		mapEditor.draw(renderer);
-		renderer.useColorMask(true);
 		renderer.renderImage2D(50, 50, tempPlayer);
-		renderer.useCamera(false);
+		renderer.renderImage2D(150, 50, 64, 64, tempPlayer);
+		renderer.renderImage2D(50, 150, tempPlayer, 0xFFFF00FF, 0xFFFFFF00);
+		renderer.renderImage2D(150, 150, 64, 64, tempPlayer, 0xFFFF00FF, 0xFFFFFF00);
 		renderer.useColorMask(false);
 	}
 

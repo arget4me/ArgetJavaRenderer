@@ -2,6 +2,7 @@ package com.argetgames.arget2d.menu;
 
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.input.Mouse;
+import com.argetgames.arget2d.input.Mouse.MouseButton;
 
 public class Scroller extends Button{
 	
@@ -21,12 +22,19 @@ public class Scroller extends Button{
 		currentScrollY = minY;
 	}
 
-	
+	private boolean holdPressed = false;
 	public void update(){
 		int mx = Mouse.getMouseX();
 		int my = Mouse.getMouseY();
 		super.update(mx, my);
+		if(!Mouse.getMouse().isButtonPress(MouseButton.LEFT)){
+			holdPressed = false;
+		}
+		if(holdPressed){
+			pressed = true;
+		}
 		if(pressed){
+			holdPressed = true;
 			if(currentMouseY == -1){
 				currentMouseY = my;
 			}else {
