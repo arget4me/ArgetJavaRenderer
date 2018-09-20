@@ -14,7 +14,7 @@ public class Rectangle {
 		this.height = height;
 	}
 	
-	protected boolean containsPoint(int xa, int ya){
+	public boolean containsPoint(int xa, int ya){
 		if(xa >= x && xa < x + width){
 			if(ya >= y && ya < y + height){
 				return true;
@@ -43,26 +43,26 @@ public class Rectangle {
 		if(containsPoint(other.x, other.y))return true;
 		
 		//top right
-		if(containsPoint(other.x + other.width, other.y))return true;
+		if(containsPoint(other.x + other.width-1, other.y))return true;
 		
 		//bottom left
-		if(containsPoint(other.x, other.y + other.width))return true;
+		if(containsPoint(other.x, other.y + other.width -1))return true;
 		
 		//bottom right
-		if(containsPoint(other.x + other.width, other.y + other.height))return true;
+		if(containsPoint(other.x + other.width - 1, other.y + other.height -1))return true;
 		
 		//check if inside other
 		//top left
 		if(other.containsPoint(x, y))return true;
 		
 		//top right
-		if(other.containsPoint(x + width, y))return true;
+		if(other.containsPoint(x + width -1, y))return true;
 		
 		//bottom left
-		if(other.containsPoint(x, y + height))return true;
+		if(other.containsPoint(x, y + height -1))return true;
 		
 		//bottom right
-		if(other.containsPoint(x + width, y + height))return true;
+		if(other.containsPoint(x + width -1, y + height -1))return true;
 		
 		return false;
 	}

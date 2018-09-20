@@ -14,6 +14,7 @@ public class Tilemap {
 	protected Rectangle[] redRectangles = new Rectangle[0];
 	protected Rectangle[] blueRectangles = new Rectangle[0];
 	private boolean showGrid = true;
+	protected boolean showSolids = false;
 
 	public Tilemap(int numTilesWide, int numTilesHigh, int tileWidth, int tileHeight, SpriteSheet tileSprites) {
 		this.numTilesWide = numTilesWide;
@@ -41,6 +42,95 @@ public class Tilemap {
 		temp[blueRectangles.length] = rectangle;
 		blueRectangles = temp;
 	}
+	
+	private void resizeArrays(){
+		int numNull = 0;
+		for(int i = 0; i < redRectangles.length; i++){
+			if(redRectangles[i] == null)
+				numNull++;
+		}
+		
+		for(int i = 0; i < redRectangles.length; i++){
+			if(redRectangles[i] == null){
+				int index = i;
+				for(int j = i + 1; j < redRectangles.length; j++){
+					redRectangles[index] = redRectangles[j];
+					if(redRectangles[index] != null){
+						index++;
+					}
+				}
+			}
+		}
+		
+		int newSize = redRectangles.length - numNull;
+		if(newSize > 0){
+			Rectangle[] temp = new Rectangle[newSize];
+			System.arraycopy(redRectangles, 0, temp, 0, newSize);
+			redRectangles = temp;
+		}else {
+			redRectangles = new Rectangle[0];
+		}
+		
+		numNull = 0;
+		for(int i = 0; i < blueRectangles.length; i++){
+			if(blueRectangles[i] == null)
+				numNull++;
+		}
+		
+		for(int i = 0; i < blueRectangles.length; i++){
+			if(blueRectangles[i] == null){
+				numNull++;
+				int index = i;
+				for(int j = i + 1; j < blueRectangles.length; j++){
+					blueRectangles[index] = blueRectangles[j];
+					if(blueRectangles[index] != null){
+						index++;
+					}
+				}
+			}
+		}
+		newSize = blueRectangles.length - numNull;
+		if(newSize > 0){
+			Rectangle[] temp = new Rectangle[newSize];
+			System.arraycopy(blueRectangles, 0, temp, 0, newSize);
+			blueRectangles = temp;
+		}else {
+			blueRectangles = new Rectangle[0];
+		}
+	}
+	
+	protected void removeRectangle(int xT, int yT, int width, int height) {
+		Rectangle r = new Rectangle(xT, yT, width, height);
+		
+		for(int i = 0; i < redRectangles.length; i++){
+			if(redRectangles[i].collision(r)){
+				redRectangles[i] = null;
+			}
+		}
+		
+		for(int i = 0; i < blueRectangles.length; i++){
+			if(blueRectangles[i].collision(r)){
+				blueRectangles[i] = null;
+			}
+		}
+		resizeArrays();
+	}
+	
+	protected void removeRectangle(Rectangle r) {
+		
+		for(int i = 0; i < redRectangles.length; i++){
+			if(redRectangles[i] == r){
+				redRectangles[i] = null;
+			}
+		}
+		
+		for(int i = 0; i < blueRectangles.length; i++){
+			if(blueRectangles[i] == r){
+				blueRectangles[i] = null;
+			}
+		}
+		resizeArrays();
+	}
 
 	protected void fillWithEmptyTiles() {
 		for (int i = 0; i < tiles.length; i++) {
@@ -57,7 +147,26 @@ public class Tilemap {
 	protected void toggleGrid(){
 		showGrid = !showGrid;
 	}
+	
+	protected void toggleShowSolids(){
+		showSolids = !showSolids;
+	}
 
+	private void drawSolids(Renderer2D renderer){
+		if(showSolids){
+			renderer.useColorMask(false);
+			renderer.useAlpha(true);
+			for(int i = 0; i < redRectangles.length; i++){
+				redRectangles[i].draw(renderer, 0x99FF0000);
+			}
+			for(int i = 0; i < blueRectangles.length; i++){
+				blueRectangles[i].draw(renderer, 0x990000FF);
+			}
+			renderer.useAlpha(false);
+			renderer.useColorMask(true);
+		}
+	}
+	
 	public void draw(Renderer2D renderer) {
 		if(showGrid){
 			int color = 0xFF333333;
@@ -77,17 +186,7 @@ public class Tilemap {
 			}
 		}
 		
-		renderer.useColorMask(false);
-		renderer.useAlpha(true);
-		for(int i = 0; i < redRectangles.length; i++){
-			redRectangles[i].draw(renderer, 0x99FF0000);
-		}
-		for(int i = 0; i < blueRectangles.length; i++){
-			blueRectangles[i].draw(renderer, 0x990000FF);
-		}
-		renderer.useAlpha(false);
-		renderer.useColorMask(true);
-		
+		drawSolids(renderer);
 	}
 
 }

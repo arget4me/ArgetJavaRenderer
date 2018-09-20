@@ -1,0 +1,15 @@
+LevelEditor:
+
+: Draw solid rectangle //RED
+: Draw solid rectangle, solid from top //BLUE
+: Map tiles to rectangles from image, makes the largest rectangle //RED, BLUE IMAGE
+: Edit rectangles: drag corners, delete.
+: Eraser button 
+* Combine rectangles that are side by side.
+
+Renderer2D:
+: Don't loop through pixels that are renderer outside of buffer. Handles camera also.
+: Improves performance for larger images and rectangles.
+
+Image2D:
+* able to load images that are builded with program without needing "res" folder next to jar.
