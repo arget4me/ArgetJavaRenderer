@@ -34,9 +34,12 @@ public class PlatformGame extends Gameloop {
 		fontSheet = new SpriteSheet("res/images/8bitFont.png", 8, 8);
 		textRenderer = new TextRenderer(fontSheet, " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0xFFFFFFFF);
 		
-		tileSheet = new SpriteSheet("res/images/free_assets/SunnyLand/tileset.png", 16, 16);
-		tileSheetSolidMap = new SpriteSheet("res/images/free_assets/SunnyLand/tileset_solidMap.png", 16, 16);
-		mapEditor = new TilemapEditor(4000, 20, 16, 16, tileSheet);
+//		tileSheet = new SpriteSheet("res/images/free_assets/SunnyLand/tileset.png", 16, 16);
+//		tileSheetSolidMap = new SpriteSheet("res/images/free_assets/SunnyLand/tileset_solidMap.png", 16, 16);
+		
+		tileSheet = new SpriteSheet("res/images/tileset.png", 16, 16);
+		tileSheetSolidMap = new SpriteSheet("res/images/tilesetSolidMap.png", 16, 16);
+		mapEditor = new TilemapEditor(400, 400, 16, 16, tileSheet);
 		mapEditor.addSolidMap(tileSheetSolidMap);
 	}
 

@@ -92,17 +92,17 @@ public class TilemapEditor extends Tilemap {
 		
 		//tool buttons:
 		//row 0
-		gridButton = new Image2DButton(panelX + padding, padding, buttonWidth, buttonWidth, gridImg);
-		drawRedSolidButton = new Image2DButton(panelX + padding + (buttonWidth + padding), padding, buttonWidth, buttonWidth, redRectImg);
-		drawBlueSolidButton = new Image2DButton(panelX + padding + (buttonWidth + padding)*2, padding, buttonWidth, buttonWidth, blueBlueImg);
-		editSolids = new Image2DButton(panelX + padding + (buttonWidth + padding)*3, padding, buttonWidth, buttonWidth, editRectImg);
-		toggleShowSolids = new Image2DButton(panelX + padding + (buttonWidth + padding)*4, padding, buttonWidth, buttonWidth, showHideImg);
-		erasorButton = new Image2DButton(panelX + padding + (buttonWidth + padding)*5, padding, buttonWidth, buttonWidth, eraserImg);
+		gridButton = new Image2DButton(panelX + getButtonX(0), padding, buttonWidth, buttonWidth, gridImg);
+		drawRedSolidButton = new Image2DButton(panelX + getButtonX(1), padding, buttonWidth, buttonWidth, redRectImg);
+		drawBlueSolidButton = new Image2DButton(panelX + getButtonX(2), padding, buttonWidth, buttonWidth, blueBlueImg);
+		editSolids = new Image2DButton(panelX + getButtonX(3), padding, buttonWidth, buttonWidth, editRectImg);
+		toggleShowSolids = new Image2DButton(panelX + getButtonX(4), padding, buttonWidth, buttonWidth, showHideImg);
+		erasorButton = new Image2DButton(panelX + getButtonX(5), padding, buttonWidth, buttonWidth, eraserImg);
 		
 		//row 1
-		testButton = new Image2DButton(panelX + padding, padding + (buttonWidth + padding), buttonWidth, buttonWidth, playImg);
-		saveButton = new Image2DButton(panelX + padding + (buttonWidth + padding), padding + (buttonWidth + padding), buttonWidth, buttonWidth, saveImg);
-		loadButton = new Image2DButton(panelX + padding + (buttonWidth + padding) * 2, padding + (buttonWidth + padding), buttonWidth, buttonWidth, loadImg);
+		testButton = new Image2DButton(panelX + getButtonX(0), padding + (buttonWidth + padding), buttonWidth, buttonWidth, playImg);
+		saveButton = new Image2DButton(panelX + getButtonX(1), padding + (buttonWidth + padding), buttonWidth, buttonWidth, saveImg);
+		loadButton = new Image2DButton(panelX + getButtonX(2), padding + (buttonWidth + padding), buttonWidth, buttonWidth, loadImg);
 		startY = (buttonWidth + padding * 2) * 4;
 		for (int i = 0; i < buttons.length; i++) {
 			int xa = getButtonX(i);
@@ -507,13 +507,16 @@ public class TilemapEditor extends Tilemap {
 		}
 		
 		renderer.useCamera(false);
-		renderer.fillRect(panelX, 0, panelWidth, Gameloop.globalHeight, 0xFF00FFFF);
+		renderer.fillRect(panelX, 0, panelWidth, Gameloop.globalHeight, 0xFF666666);
 		for (int i = 0; i < buttons.length; i++) {
 			if (buttons[i].y > startY - tileWidth)
 				buttons[i].draw(renderer, 0xFF333333);
 		}
-		renderer.fillRect(panelX, 0, panelWidth, startY, 0x5500FFFF);
-
+		renderer.fillRect(panelX, 0, panelWidth, startY, 0xFF666666);
+		renderer.fillRect(panelX, startY-1, getButtonX(5) + getButtonX(1) - padding, 1, 0xFF444444);
+		renderer.fillRect(panelX, 0, 1, Gameloop.globalHeight, 0xFF444444);
+		renderer.fillRect(panelX + getButtonX(5) + getButtonX(1) - padding, 0, 1, Gameloop.globalHeight, 0xFF444444);
+		
 		drawToolButtons(renderer);
 		drawScroller(renderer);
 		renderer.useCamera(true);

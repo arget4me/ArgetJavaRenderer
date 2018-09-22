@@ -60,13 +60,19 @@ public class Tilemap {
 	
 	protected void load(byte[] tilemapData){
 		//TODO: errorcheck bounds of tilemapData..
-		int tilesLength = 0x00000000;
+		int tilesWide = 0x00000000;
 		int offset = 0;
 		for(int i = 0; i < Integer.BYTES; i++){
-			tilesLength |= ((tilemapData[offset] & 0xFF) << (8*i));
+			tilesWide |= ((tilemapData[offset] & 0xFF) << (8*i));
 			offset++;
 		}
-		int[] localTiles = new int[tilesLength];
+		
+		int tilesHigh = 0x00000000;
+		for(int i = 0; i < Integer.BYTES; i++){
+			tilesHigh |= ((tilemapData[offset] & 0xFF) << (8*i));
+			offset++;
+		}
+		int[] localTiles = new int[tilesHigh * tilesWide];
 		for(int i = 0; i < localTiles.length; i++){
 			for(int j = 0; j < Integer.BYTES; j++) {
 				localTiles[i] |= (tilemapData[offset] & 0xFF) << (8*j);
@@ -133,12 +139,15 @@ public class Tilemap {
 			blue[i] = new Rectangle(x, y, width, height);
 		}
 		tiles = localTiles;
+		numTilesWide = tilesWide;
+		numTilesHigh = tilesHigh;
 		redRectangles = red;
 		blueRectangles = blue;
 	}
 	
 	protected byte[] getDataTilemap(){
-		int tilesLengthNumberSize = 1 * Integer.BYTES;
+		int tilesWideSize = 1 * Integer.BYTES;
+		int tilesHighSize = 1 * Integer.BYTES;
 		int tilesSize = tiles.length * Integer.BYTES;
 		int redLengthNumberSize = 1 * Integer.BYTES;
 		int redAttributesSize = (redRectangles.length * 4) * Integer.BYTES;
@@ -149,7 +158,8 @@ public class Tilemap {
 //		int spriteSheetLength = spritesheetPath.getBytes().length;
 		
 		int size = 0;
-		size += tilesLengthNumberSize;
+		size += tilesWideSize;
+		size += tilesHighSize;
 		size += tilesSize;
 		size += redLengthNumberSize;
 		size += redAttributesSize;
@@ -161,7 +171,11 @@ public class Tilemap {
 		
 		int offset = 0;
 		for(int i = 0; i < Integer.BYTES; i++){
-			data[offset] = (byte) ((tiles.length >> (8*i)) & 0xFF);
+			data[offset] = (byte) ((numTilesWide >> (8*i)) & 0xFF);
+			offset++;
+		}
+		for(int i = 0; i < Integer.BYTES; i++){
+			data[offset] = (byte) ((numTilesHigh >> (8*i)) & 0xFF);
 			offset++;
 		}
 		for(int i = 0; i < tiles.length; i++){
