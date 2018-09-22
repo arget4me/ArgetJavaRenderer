@@ -22,7 +22,7 @@ public class PlatformGame extends Gameloop {
 
 	public PlatformGame(int width, int height, int scale) {
 		super(width, height, scale, true);
-		debug_log = false;
+//		debug_log = false;
 	}
 
 	protected void onCreate() {

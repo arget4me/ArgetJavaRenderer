@@ -2,6 +2,8 @@ package com.argetgames.arget2d.tilemap;
 
 import java.awt.event.KeyEvent;
 
+import javax.swing.JFileChooser;
+
 import com.argetgames.arget2d.game.Gameloop;
 import com.argetgames.arget2d.graphics.Image2D;
 import com.argetgames.arget2d.graphics.Renderer2D;
@@ -9,7 +11,6 @@ import com.argetgames.arget2d.graphics.SpriteSheet;
 import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
 import com.argetgames.arget2d.input.Mouse.MouseButton;
-import com.argetgames.arget2d.menu.Button;
 import com.argetgames.arget2d.menu.Image2DButton;
 import com.argetgames.arget2d.menu.Rectangle;
 import com.argetgames.arget2d.menu.Scroller;
@@ -20,10 +21,10 @@ public class TilemapEditor extends Tilemap {
 	private int panelX;
 	private Image2DButton[] buttons;
 	private Image2DButton gridButton, drawRedSolidButton, drawBlueSolidButton, editSolids, toggleShowSolids, erasorButton;
-	private Image2DButton testButton;
+	private Image2DButton testButton, saveButton, loadButton;
 	private static Image2D
 	gridImg, redRectImg, blueBlueImg, editRectImg, showHideImg, eraserImg,
-	playImg;
+	playImg, saveImg, loadImg;
 	private int buttonsPerLine, padding, scrollerSize, buttonWidth, scrollMax, startY;
 	private Scroller scroller;
 	private double panSpeed = 4.5;
@@ -56,7 +57,10 @@ public class TilemapEditor extends Tilemap {
 		editRectImg = new Image2D("/images/editRect.png", true);
 		showHideImg = new Image2D("/images/showHide.png", true);
 		eraserImg = new Image2D("/images/eraser.png", true);
+		
 		playImg = new Image2D("/images/play.png", true);
+		saveImg = new Image2D("/images/save.png", true);
+		loadImg = new Image2D("/images/load.png", true);
 		testPlayer = new Rectangle(0, 0, tileWidth, tileHeight);
 		for(int i = 0; i < selectionCorners.length; i++){
 			selectionCorners[i] = new Rectangle(0, 0, 1, 1);
@@ -97,7 +101,8 @@ public class TilemapEditor extends Tilemap {
 		
 		//row 1
 		testButton = new Image2DButton(panelX + padding, padding + (buttonWidth + padding), buttonWidth, buttonWidth, playImg);
-		
+		saveButton = new Image2DButton(panelX + padding + (buttonWidth + padding), padding + (buttonWidth + padding), buttonWidth, buttonWidth, saveImg);
+		loadButton = new Image2DButton(panelX + padding + (buttonWidth + padding) * 2, padding + (buttonWidth + padding), buttonWidth, buttonWidth, loadImg);
 		startY = (buttonWidth + padding * 2) * 4;
 		for (int i = 0; i < buttons.length; i++) {
 			int xa = getButtonX(i);
@@ -155,6 +160,23 @@ public class TilemapEditor extends Tilemap {
 			testPlaying = true;
 			return;
 		}
+		
+		saveButton.update(mx, my);
+		if(saveButton.getClicked()){
+			setCurrentTile(0);
+			final JFileChooser fc = new JFileChooser();
+			fc.showOpenDialog(null);
+			write(fc.getSelectedFile());
+		}
+		
+		loadButton.update(mx, my);
+		if(loadButton.getClicked()){
+			setCurrentTile(0);
+			final JFileChooser fc = new JFileChooser();
+			fc.showOpenDialog(null);
+			load(fc.getSelectedFile());
+		}
+		
 		gridButton.update(mx, my);
 		if (gridButton.getClicked())
 			toggleGrid();
@@ -463,6 +485,8 @@ public class TilemapEditor extends Tilemap {
 		toggleShowSolids.draw(renderer, 0xFFFFFF00);
 		erasorButton.draw(renderer, 0xFF6666);
 		testButton.draw(renderer, 0xFF444444);
+		saveButton.draw(renderer, 0xFFFF0000);
+		loadButton.draw(renderer, 0xFF0000FF);
 	}
 
 	public void draw(Renderer2D renderer) {

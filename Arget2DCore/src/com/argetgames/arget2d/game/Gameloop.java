@@ -119,9 +119,14 @@ public abstract class Gameloop extends Canvas implements Runnable {
 				}
 			}
 			previous += NS_PER_UPDATE;
-			sleepTime = (previous - System.nanoTime());
+			long now = System.nanoTime();
+			sleepTime = (previous - now);
 			if (sleepTime > 1) {
 				java.util.concurrent.locks.LockSupport.parkNanos(sleepTime);
+			}else if(sleepTime < 0){
+				if(debug_log)
+					System.out.println("frame drop!");
+				previous = System.nanoTime();
 			}
 		}
 	}

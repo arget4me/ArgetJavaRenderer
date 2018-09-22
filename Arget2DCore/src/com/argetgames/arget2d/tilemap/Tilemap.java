@@ -1,5 +1,10 @@
 package com.argetgames.arget2d.tilemap;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.graphics.SpriteSheet;
 import com.argetgames.arget2d.menu.Rectangle;
@@ -39,6 +44,200 @@ public class Tilemap {
 		}
 	}
 	
+	protected void load(String path){
+		
+	}
+	
+	protected void load(File file){
+		if(file == null)return;
+		try {
+			byte[] data = Files.readAllBytes(file.toPath());
+			load(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected void load(byte[] tilemapData){
+		//TODO: errorcheck bounds of tilemapData..
+		int tilesLength = 0x00000000;
+		int offset = 0;
+		for(int i = 0; i < Integer.BYTES; i++){
+			tilesLength |= ((tilemapData[offset] & 0xFF) << (8*i));
+			offset++;
+		}
+		int[] localTiles = new int[tilesLength];
+		for(int i = 0; i < localTiles.length; i++){
+			for(int j = 0; j < Integer.BYTES; j++) {
+				localTiles[i] |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+		}
+		
+		
+		int redLength = 0;
+		for(int i = 0; i < Integer.BYTES; i++){
+			redLength |= (tilemapData[offset] & 0xFF) << (8*i);
+			offset++;
+		}
+		
+		Rectangle[] red = new Rectangle[redLength];
+		for(int i = 0; i < red.length; i++){
+			int x = 0; int y = 0; int width = 0; int height = 0;
+			for(int j = 0; j < Integer.BYTES; j++) {
+				x |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				y |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				width |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				height |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			red[i] = new Rectangle(x, y, width, height);
+		}
+		
+		
+
+		int blueLength = 0;
+		for(int i = 0; i < Integer.BYTES; i++){
+			blueLength |= (tilemapData[offset] & 0xFF) << (8*i);
+			offset++;
+		}
+		
+		Rectangle[] blue = new Rectangle[blueLength];
+		for(int i = 0; i < blue.length; i++){
+			int x = 0; int y = 0; int width = 0; int height = 0;
+			for(int j = 0; j < Integer.BYTES; j++) {
+				x |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				y |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				width |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				height |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+			blue[i] = new Rectangle(x, y, width, height);
+		}
+		tiles = localTiles;
+		redRectangles = red;
+		blueRectangles = blue;
+	}
+	
+	protected byte[] getDataTilemap(){
+		int tilesLengthNumberSize = 1 * Integer.BYTES;
+		int tilesSize = tiles.length * Integer.BYTES;
+		int redLengthNumberSize = 1 * Integer.BYTES;
+		int redAttributesSize = (redRectangles.length * 4) * Integer.BYTES;
+		int blueLengthNumberSize = 1 * Integer.BYTES;
+		int blueAttributesSize = (blueRectangles.length * 4) * Integer.BYTES;
+//		String spritesheetPath
+//		int spriteSheetLengthSize = 1 * Integer.BYTES;
+//		int spriteSheetLength = spritesheetPath.getBytes().length;
+		
+		int size = 0;
+		size += tilesLengthNumberSize;
+		size += tilesSize;
+		size += redLengthNumberSize;
+		size += redAttributesSize;
+		size += blueLengthNumberSize;
+		size += blueAttributesSize;
+//		size += spriteSheetLengthSize;
+//		size += spriteSheetLength;
+		byte[] data = new byte[size];
+		
+		int offset = 0;
+		for(int i = 0; i < Integer.BYTES; i++){
+			data[offset] = (byte) ((tiles.length >> (8*i)) & 0xFF);
+			offset++;
+		}
+		for(int i = 0; i < tiles.length; i++){
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((tiles[i] >> (8*j)) & 0xFF);
+				offset++;
+			}
+		}
+		
+		for(int i = 0; i < Integer.BYTES; i++){
+			data[offset] = (byte) ((redRectangles.length >> (8*i)) & 0xFF);
+			offset++;
+		}
+		
+		for(int i = 0; i < redRectangles.length; i++){
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((redRectangles[i].x >> (8*j)) & 0xFF);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((redRectangles[i].y >> (8*j)) & 0xFF);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((redRectangles[i].width >> (8*j)) & 0xFF);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((redRectangles[i].height >> (8*j)) & 0xFF);
+				offset++;
+			}
+		}
+		
+		
+		for(int i = 0; i < Integer.BYTES; i++){
+			data[offset] = (byte) ((blueRectangles.length >> (8*i)) & 0xFF);
+			offset++;
+		}
+		
+		for(int i = 0; i < blueRectangles.length; i++){
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((blueRectangles[i].x >> (8*j)) & 0xFF);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((blueRectangles[i].y >> (8*j)) & 0xFF);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((blueRectangles[i].width >> (8*j)) & 0xFF);
+				offset++;
+			}
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((blueRectangles[i].height >> (8*j)) & 0xFF);
+				offset++;
+			}
+		}
+		
+		return data;
+	}
+	
+	protected void write(File file){
+		if(file == null)return;
+		byte[] data = getDataTilemap();
+		try {
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(data, 0, data.length);
+			fos.flush();
+			fos.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
 	protected void addRedRectangle(Rectangle rectangle){
 		if(rectangle == null)return;
 		Rectangle[] temp = new Rectangle[redRectangles.length + 1];
@@ -55,6 +254,8 @@ public class Tilemap {
 		blueRectangles = temp;
 	}
 	
+	
+	//TODO: make this nicer to read.
 	private void resizeArrays(){
 		int numNull = 0;
 		for(int i = 0; i < redRectangles.length; i++){
