@@ -22,7 +22,7 @@ public class PlatformGame extends Gameloop {
 
 	public PlatformGame(int width, int height, int scale) {
 		super(width, height, scale, true);
-//		debug_log = false;
+		debug_log = false;
 	}
 
 	protected void onCreate() {
@@ -51,13 +51,9 @@ public class PlatformGame extends Gameloop {
 	public void draw() {
 		renderer.useColorMask(true);
 		renderer.useCamera(false);
-		renderer.renderImage2D(0, 0, globalWidth, globalHeight, aspect);
+		renderer.fillRect(0, 0, globalWidth, globalHeight, 0xFF888888);
 		renderer.useCamera(true);
 		mapEditor.draw(renderer);
-//		renderer.renderImage2D(50, 50, tempPlayer);
-//		renderer.renderImage2D(150, 50, 64, 64, tempPlayer);
-//		renderer.renderImage2D(50, 150, tempPlayer, 0xFFFF00FF, 0xFFFFFF00);
-//		renderer.renderImage2D(150, 150, 64, 64, tempPlayer, 0xFFFF00FF, 0xFFFFFF00);
 		renderer.useColorMask(false);
 	}
 

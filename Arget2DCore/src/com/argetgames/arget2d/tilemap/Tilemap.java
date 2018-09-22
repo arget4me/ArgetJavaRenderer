@@ -27,6 +27,18 @@ public class Tilemap {
 		fillWithEmptyTiles();
 	}
 	
+	protected void fillWithEmptyTiles() {
+		for (int i = 0; i < tiles.length; i++) {
+			tiles[i] = -1;
+		}
+	}
+
+	protected void fillTilesWithColors() {
+		for (int i = 0; i < tiles.length; i++) {
+			tiles[i] = 0xFF000000 | ((i * 12) % 0xFFFFFF);
+		}
+	}
+	
 	protected void addRedRectangle(Rectangle rectangle){
 		if(rectangle == null)return;
 		Rectangle[] temp = new Rectangle[redRectangles.length + 1];
@@ -71,6 +83,8 @@ public class Tilemap {
 			redRectangles = new Rectangle[0];
 		}
 		
+		
+		//check for blue:
 		numNull = 0;
 		for(int i = 0; i < blueRectangles.length; i++){
 			if(blueRectangles[i] == null)
@@ -79,7 +93,6 @@ public class Tilemap {
 		
 		for(int i = 0; i < blueRectangles.length; i++){
 			if(blueRectangles[i] == null){
-				numNull++;
 				int index = i;
 				for(int j = i + 1; j < blueRectangles.length; j++){
 					blueRectangles[index] = blueRectangles[j];
@@ -89,6 +102,7 @@ public class Tilemap {
 				}
 			}
 		}
+		
 		newSize = blueRectangles.length - numNull;
 		if(newSize > 0){
 			Rectangle[] temp = new Rectangle[newSize];
@@ -97,6 +111,7 @@ public class Tilemap {
 		}else {
 			blueRectangles = new Rectangle[0];
 		}
+		
 	}
 	
 	protected void removeRectangle(int xT, int yT, int width, int height) {
@@ -131,18 +146,6 @@ public class Tilemap {
 		}
 		resizeArrays();
 	}
-
-	protected void fillWithEmptyTiles() {
-		for (int i = 0; i < tiles.length; i++) {
-			tiles[i] = -1;
-		}
-	}
-
-	protected void fillTilesWithColors() {
-		for (int i = 0; i < tiles.length; i++) {
-			tiles[i] = 0xFF000000 | ((i * 12) % 0xFFFFFF);
-		}
-	}
 	
 	protected void toggleGrid(){
 		showGrid = !showGrid;
@@ -150,6 +153,26 @@ public class Tilemap {
 	
 	protected void toggleShowSolids(){
 		showSolids = !showSolids;
+	}
+	
+	public boolean checkCollision(Rectangle rect, int xa, int ya){
+		
+		Rectangle temp = new Rectangle(rect.x + xa, rect.y + ya, rect.width, rect.height);
+		//red collision is solid from all sides.
+		for(int i = 0; i < redRectangles.length; i++){
+			if(temp.collision(redRectangles[i])){
+				return true;
+			}
+		}
+		
+		for(int i = 0; i < blueRectangles.length; i++){
+			if(temp.collision(blueRectangles[i])){
+				if(!rect.collision(blueRectangles[i]) && ya > 0){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void drawSolids(Renderer2D renderer){

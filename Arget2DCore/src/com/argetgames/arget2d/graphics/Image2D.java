@@ -3,6 +3,7 @@ package com.argetgames.arget2d.graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -18,18 +19,51 @@ public class Image2D {
 		load(path);
 	}
 	
+	public Image2D(String path, boolean useRecourceLoading) {
+		if(useRecourceLoading){
+			loadResource(path);
+		}else {
+			load(path);
+		}
+	}
+	
 	public Image2D(Image2D src, int x, int y, int width, int height) {
 		load(src, x, y, width, height);
 	}
 	
 	/**
-	 * Load image from file. 
+	 * Load image from file. This can't load images from inside jar file.
 	 * @TODO Implement exception handling if image can't be loaded. Fill a temporary buffer with pink. 0xFFFF00FF
-	 * @param path Relative path to file
+	 * @param path Relative path to file. Relative to the .jar file. (if res is folder next to jar containing img.png, than the path is "res/img.png")
 	 */
 	private void load(String path){
 		try {
 			img = ImageIO.read(new File(path));
+			width = img.getWidth();
+			height = img.getHeight();
+			imagePixels = new int[width * height];
+			img.getRGB(0, 0, width, height, imagePixels, 0, width);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Error: Couldn't load image with path: " + path,
+                    "Error loading image!",
+                    JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	/**
+	 * Load image from file relative to the jar file. This enables images being exported and loaded from inside jar file.
+	 * @TODO Implement exception handling if image can't be loaded. Fill a temporary buffer with pink. 0xFFFF00FF
+	 * @param path Relative path to file. Relative to the build folders. (if res is build folder containing img.png, than the path is "/img.png")
+	 */
+	private void loadResource(String path){
+		try {
+			URL url = this.getClass().getResource(path);
+			if(url == null){
+				throw new IOException("Can't find file in resource!");
+			}
+			img = ImageIO.read(url);
 			width = img.getWidth();
 			height = img.getHeight();
 			imagePixels = new int[width * height];

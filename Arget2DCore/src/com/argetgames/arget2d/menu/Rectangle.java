@@ -46,7 +46,7 @@ public class Rectangle {
 		if(containsPoint(other.x + other.width-1, other.y))return true;
 		
 		//bottom left
-		if(containsPoint(other.x, other.y + other.width -1))return true;
+		if(containsPoint(other.x, other.y + other.height -1))return true;
 		
 		//bottom right
 		if(containsPoint(other.x + other.width - 1, other.y + other.height -1))return true;
