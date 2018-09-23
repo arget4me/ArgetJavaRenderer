@@ -8,7 +8,7 @@ import com.argetgames.arget2d.tilemap.Tilemap;
 public class Player extends Entity {
 
 	public Player(int x, int y, int width, int height, Tilemap map) {
-		super(x, y, width, height, 16 * 3.0, 1.0 / 3.0, map);
+		super(x, y, width, height, 16 * 4.0, 1.0 / 2.7, map);
 	}
 
 	@Override
@@ -22,6 +22,11 @@ public class Player extends Entity {
 		if (Keyboard.getKey(KeyEvent.VK_SPACE)) {
 			startJump();
 		}
+	}
+
+	@Override
+	protected void onTileCollision() {
+		//DO NOTHING
 	}
 
 }

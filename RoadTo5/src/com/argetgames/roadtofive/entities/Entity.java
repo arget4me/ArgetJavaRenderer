@@ -41,6 +41,8 @@ public abstract class Entity extends Rectangle {
 		acc_y = ((-2) * (jumpHeight)) / (secondsToPeak * secondsToPeak);
 	}
 	
+	protected abstract void onTileCollision();
+	
 	private void moveSteps(double xa, double ya) {
 		int deltaY = (int) (yPos + ya) - y;
 		int stepsY = deltaY;
@@ -100,6 +102,10 @@ public abstract class Entity extends Rectangle {
 		if (noCollisionX || stepsX == 0) {
 			xPos += xa;
 		}
+		
+		if(!noCollisionY || !noCollisionX) {
+			onTileCollision();
+		}
 	}
 
 	protected void move(double xa, double ya){
@@ -139,7 +145,8 @@ public abstract class Entity extends Rectangle {
 	private void checkFalling(){
 		if(!onGround && !falling && !jumping){
 			falling = true;
-			vel_y = 0;
+			vel_y /= 2;
+			if(vel_y < 0)vel_y = 0;
 		}else {
 			if(onGround || jumping)
 				falling = false;
@@ -162,6 +169,12 @@ public abstract class Entity extends Rectangle {
 	public void draw(Renderer2D renderer) {
 		renderer.useCamera(true);
 		super.draw(renderer, 0xFF00FFFF);
+		renderer.useCamera(false);
+	}
+	
+	public void draw(Renderer2D renderer, int color) {
+		renderer.useCamera(true);
+		super.draw(renderer, color);
 		renderer.useCamera(false);
 	}
 
