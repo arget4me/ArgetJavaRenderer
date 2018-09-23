@@ -1,16 +1,16 @@
 package com.argetgames.roadtofive;
 
-import java.awt.event.KeyEvent;
-
 import com.argetgames.arget2d.game.Gameloop;
-import com.argetgames.arget2d.graphics.Camera2D;
+import com.argetgames.arget2d.gamestates.GameStateManager;
 import com.argetgames.arget2d.graphics.Image2D;
 import com.argetgames.arget2d.graphics.SpriteSheet;
 import com.argetgames.arget2d.graphics.TextRenderer;
-import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
 import com.argetgames.arget2d.input.Mouse.MouseButton;
 import com.argetgames.arget2d.tilemap.TilemapEditor;
+import com.argetgames.roadtofive.gamestates.EditorState;
+import com.argetgames.roadtofive.gamestates.MenuState;
+import com.argetgames.roadtofive.gamestates.PlayState;
 
 @SuppressWarnings("serial")
 public class PlatformGame extends Gameloop {
@@ -18,11 +18,16 @@ public class PlatformGame extends Gameloop {
 	public static Image2D aspect, tempPlayer;
 	private static SpriteSheet fontSheet, tileSheet, tileSheetSolidMap;
 	public static TextRenderer textRenderer;
-	private TilemapEditor mapEditor;
 
+	private GameStateManager gsm;
+
+	public final static int MENU_STATE = 0;
+	public final static int PLAY_STATE = 1;
+	public final static int EDITOR_STATE = 2;
+	
 	public PlatformGame(int width, int height, int scale) {
 		super(width, height, scale, true);
-//		debug_log = false;
+		debug_log = false;
 	}
 
 	protected void onCreate() {
@@ -39,15 +44,20 @@ public class PlatformGame extends Gameloop {
 		
 		tileSheet = new SpriteSheet("res/images/tileset.png", 16, 16);
 		tileSheetSolidMap = new SpriteSheet("res/images/tilesetSolidMap.png", 16, 16);
-		mapEditor = new TilemapEditor(400, 400, 16, 16, tileSheet);
-		mapEditor.addSolidMap(tileSheetSolidMap);
+		
+		gsm = new GameStateManager(3);
+		gsm.addAndSetState(new MenuState(gsm), MENU_STATE);
+		gsm.addState(new PlayState(gsm, tileSheet), PLAY_STATE);
+		gsm.addState(new EditorState(gsm, tileSheet, tileSheetSolidMap), EDITOR_STATE);
+		
+
 	}
 
 	@Override
 	public void updateGame() {
 		if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE))
 			Main.mainFrame = toggleStretchFullscreen(Main.mainFrame);
-		mapEditor.update();
+		gsm.update();
 	}
 
 	@Override
@@ -55,9 +65,7 @@ public class PlatformGame extends Gameloop {
 		renderer.useColorMask(true);
 		renderer.useCamera(false);
 		renderer.fillRect(0, 0, globalWidth, globalHeight, 0xFF888888);
-		renderer.useCamera(true);
-		mapEditor.draw(renderer);
-		renderer.useColorMask(false);
+		gsm.draw(renderer);
 	}
 
 }

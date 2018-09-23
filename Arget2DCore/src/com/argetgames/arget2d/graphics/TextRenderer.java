@@ -33,13 +33,13 @@ public class TextRenderer {
 	
 	public void drawText(Renderer2D renderer, int x, int y, String text, int spacing, int color){
 		for(int i = 0; i < text.length(); i++){
-			drawCharacter(renderer, x + i * (spacing + fontPixelWidth/2), y, text.charAt(i), color);
+			drawCharacter(renderer, x + i * (spacing + fontPixelWidth), y, text.charAt(i), color);
 		}
 	}
 	
 	public void drawText(Renderer2D renderer, int x, int y, int size, String text, int spacing, int color){
 		for(int i = 0; i < text.length(); i++){
-			drawCharacter(renderer, x + i * (spacing+size/2), y, size, text.charAt(i), color);
+			drawCharacter(renderer, x + i * (spacing+size), y, size, text.charAt(i), color);
 		}
 	}
 	

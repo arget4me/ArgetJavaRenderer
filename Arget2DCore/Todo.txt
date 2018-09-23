@@ -11,12 +11,12 @@ LevelEditor:
 : Save / Load TileMap.
 : Fix bug when erasing blue rectangles. Removes extra rectangles. SOLVED: had forgot to do the same thing for blueRectangles as for Red.
 * Layers
-* Separate entity layer or are they just as any other?
+* Separate entity layer or are they just as any other?// make a separate tilemap.
 * Combine rectangles that are side by side.
 
 TileMap:
 : Should it handle/check collision? How is blue and red rectangles handled? (Blue: solid from top. Red: full solid). 
-* Load from file
+: Load from file
 
 Renderer2D:
 : Don't loop through pixels that are renderer outside of buffer. Handles camera also.

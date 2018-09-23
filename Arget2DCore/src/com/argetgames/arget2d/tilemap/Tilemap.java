@@ -18,7 +18,7 @@ public class Tilemap {
 	protected SpriteSheet tileSprites;
 	protected Rectangle[] redRectangles = new Rectangle[0];
 	protected Rectangle[] blueRectangles = new Rectangle[0];
-	private boolean showGrid = true;
+	private boolean showGrid = false;
 	protected boolean showSolids = false;
 
 	public Tilemap(int numTilesWide, int numTilesHigh, int tileWidth, int tileHeight, SpriteSheet tileSprites) {
@@ -30,6 +30,14 @@ public class Tilemap {
 		tiles = new int[this.numTilesWide * this.numTilesHigh];
 		this.tileSprites = tileSprites;
 		fillWithEmptyTiles();
+	}
+	
+	public Tilemap(String path, int tileWidth, int tileHeight, SpriteSheet tileSprites) {
+		this.tileWidth = tileWidth;
+		this.tileHeight = tileHeight;
+		this.tileSprites = tileSprites;
+		
+		load(path);
 	}
 	
 	protected void fillWithEmptyTiles() {
@@ -45,7 +53,7 @@ public class Tilemap {
 	}
 	
 	protected void load(String path){
-		
+		load(new File(path));
 	}
 	
 	protected void load(File file){
@@ -362,11 +370,11 @@ public class Tilemap {
 		resizeArrays();
 	}
 	
-	protected void toggleGrid(){
+	public void toggleGrid(){
 		showGrid = !showGrid;
 	}
 	
-	protected void toggleShowSolids(){
+	public void toggleShowSolids(){
 		showSolids = !showSolids;
 	}
 	
@@ -406,6 +414,7 @@ public class Tilemap {
 	}
 	
 	public void draw(Renderer2D renderer) {
+		renderer.useCamera(true);
 		if(showGrid){
 			int color = 0xFF333333;
 			for (int y = 0; y < numTilesHigh; y++) {
@@ -425,6 +434,7 @@ public class Tilemap {
 		}
 		
 		drawSolids(renderer);
+		renderer.useCamera(false);
 	}
 
 }

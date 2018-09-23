@@ -66,6 +66,7 @@ public class TilemapEditor extends Tilemap {
 			selectionCorners[i] = new Rectangle(0, 0, 1, 1);
 		}
 		calculateSizes();
+		toggleGrid();
 	}
 	
 	public void addSolidMap(SpriteSheet solidMap){
@@ -491,7 +492,7 @@ public class TilemapEditor extends Tilemap {
 
 	public void draw(Renderer2D renderer) {
 		super.draw(renderer);
-
+		renderer.useCamera(true);
 		if(paintedRectangle != null){
 			int color = 0xFFFF0000;
 			if(drawBlueSolid)
@@ -523,6 +524,7 @@ public class TilemapEditor extends Tilemap {
 		if(testPlaying){
 			testPlayer.draw(renderer, 0xFF00FF00);
 		}
+		renderer.useCamera(false);
 	}
 
 }

@@ -23,11 +23,11 @@ public class Rectangle {
 		return false;
 	}
 	
-	protected int getCenterX(){
+	public int getCenterX(){
 		return x + width/2;
 	}
 	
-	protected int getCenterY(){
+	public int getCenterY(){
 		return y + height/2;
 	}
 	
