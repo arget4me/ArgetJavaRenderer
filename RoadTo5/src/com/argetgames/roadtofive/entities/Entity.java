@@ -1,17 +1,16 @@
 package com.argetgames.roadtofive.entities;
 
-import java.awt.event.KeyEvent;
-
 import com.argetgames.arget2d.graphics.Renderer2D;
-import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.menu.Rectangle;
-import com.argetgames.arget2d.tilemap.Tilemap;
 import com.argetgames.roadtofive.PlatformGame;
 
 public abstract class Entity extends Rectangle {
+	
 
-	private Tilemap map;
-
+	protected Level level;
+	private static int nextID = 0;
+	private int ID = -1;
+	
 	private double xPos, yPos;
 	private double xMove = 0, yMove = 0;
 
@@ -26,11 +25,13 @@ public abstract class Entity extends Rectangle {
 	private double vel0_y = 2 * jumpHeight / secondsToPeak;
 	private double acc_y = ((-2) * (jumpHeight)) / (secondsToPeak * secondsToPeak);
 
-	public Entity(int x, int y, int width, int height, double jumpHeight, double secondsToJumpPeak, Tilemap map) {
+	public Entity(int x, int y, int width, int height, double jumpHeight, double secondsToJumpPeak, Level level) {
 		super(x, y, width, height);
 		xPos = this.x;
 		yPos = this.y;
-		this.map = map;
+		this.level = level;
+		this.ID = nextID++;
+		if(nextID > 0xFFFFFF)nextID = 0;
 		calculateJump(jumpHeight, secondsToJumpPeak);
 	}
 	
@@ -41,8 +42,27 @@ public abstract class Entity extends Rectangle {
 		acc_y = ((-2) * (jumpHeight)) / (secondsToPeak * secondsToPeak);
 	}
 	
-	protected abstract void onTileCollision();
+	public int getID() {
+		return ID;
+	}
 	
+	protected abstract void onTileCollision();
+	public void onDynamicCollision() {
+		
+	}
+	
+	public boolean handleCollisionDynamic(int dx, int dy) {
+		return false;
+	}
+	
+	public boolean handleCollisionStatic(int dx, int dy) {
+		return level.checkCollisionStatic(this, dx, dy);
+	}
+	
+	
+	/*TODO: other solution is to handle dynamic vs static differently. Draw a bounding rectangle between destination and origin.
+	 * If the bounding rectangle collides then do more precise collision.
+	 */
 	private void moveSteps(double xa, double ya) {
 		int deltaY = (int) (yPos + ya) - y;
 		int stepsY = deltaY;
@@ -51,7 +71,8 @@ public abstract class Entity extends Rectangle {
 			stepsY = -stepsY;
 			dy = -1;
 		}
-		boolean noCollisionY = true;
+		boolean noCollisionStaticY = true;
+		boolean noCollisionDynamicY = true;
 		
 		int deltaX = (int) (xPos + xa) - x;
 		int stepsX = deltaX;
@@ -60,7 +81,8 @@ public abstract class Entity extends Rectangle {
 			stepsX = -stepsX;
 			dx = -1;
 		}
-		boolean noCollisionX = true;
+		boolean noCollisionStaticX = true;
+		boolean noCollisionDynamicX = true;
 		
 		int steps = stepsY;
 		if(steps < stepsX) steps = stepsX;
@@ -68,42 +90,52 @@ public abstract class Entity extends Rectangle {
 		
 		for(int i = 0; i < steps; i++){
 			if(yy < stepsY){
-				if (map.checkCollision(this, 0, dy)) {
-					if(noCollisionY){
+				if (handleCollisionStatic(0, dy)) {
+					if(noCollisionStaticY){
 						if(jumping){
 							jumping = false;
 							vel_y =0;
 						}
 					}
-					noCollisionY = false;
+					noCollisionStaticY = false;
 				}else {
 					y += dy;
 					yy++;
 				}
+				if(handleCollisionDynamic(0, dy)) {
+					noCollisionDynamicY = false;
+				}
 			}
 			
 			if(xx < stepsX){
-				if (map.checkCollision(this, dx, 0)) {
-					noCollisionX = false;
+				if (handleCollisionStatic(dx, 0)) {
+					noCollisionStaticX = false;
 				}else {
 					x += dx;
 					xx++;
+				}
+				if(handleCollisionDynamic(dx, 0)) {
+					noCollisionDynamicX = false;
 				}
 			}
 		}
 		
 		
-		if(!noCollisionY)yPos += yy * dy;
-		if (noCollisionY || stepsY == 0) {
+		if(!noCollisionStaticY)yPos += yy * dy;
+		if (noCollisionStaticY || stepsY == 0) {
 			yPos += ya;
 		}
 		
-		if(!noCollisionX)xPos += xx * dx;
-		if (noCollisionX || stepsX == 0) {
+		if(!noCollisionStaticX)xPos += xx * dx;
+		if (noCollisionStaticX || stepsX == 0) {
 			xPos += xa;
 		}
 		
-		if(!noCollisionY || !noCollisionX) {
+		if(!noCollisionDynamicY || !noCollisionDynamicX) {
+			onDynamicCollision();
+		}
+		
+		if(!noCollisionStaticY || !noCollisionStaticX) {
 			onTileCollision();
 		}
 	}
@@ -139,7 +171,7 @@ public abstract class Entity extends Rectangle {
 	
 	private void checkGround(){
 		if(!jumping)
-			onGround = map.checkCollision(this, 0, 1);
+			onGround = level.checkCollisionStatic(this, 0, 1);
 	}
 	
 	private void checkFalling(){
