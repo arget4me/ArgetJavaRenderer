@@ -113,7 +113,7 @@ public class Player extends Living {
 				int my = Mouse.getMouseY() - PlatformGame.globalHeight/2;
 				double angle = Math.atan2(my, mx);
 				
-				level.spawnProjectile(getCenterX(), getCenterY(), 5, angle, 5, getID());
+				level.spawnProjectile(getCenterX(), getCenterY(), 5, angle, 5, 0.5, getID());
 				shootDelay = PlatformGame.global_ups / shootsPerSecond;
 			}
 		}else {

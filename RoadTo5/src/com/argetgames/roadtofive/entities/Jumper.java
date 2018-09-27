@@ -1,5 +1,6 @@
 package com.argetgames.roadtofive.entities;
 
+import com.argetgames.arget2d.graphics.Animation2D;
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.roadtofive.PlatformGame;
 
@@ -7,16 +8,22 @@ public class Jumper extends Enemy {
 	
 	public Jumper(int x, int y, int width, int height, Level level) {
 		super(x, y, width, height, level);
-		agressionRange = 8 * 16;
+		agressionRange = 10 * 16;
 		moveSpeed = 0.6;
 		shootsPerSecond = 30;
 		maxHealth = 30;
 		health = maxHealth;
 		shootDelay = (int)(PlatformGame.global_ups / shootsPerSecond);
+		{
+			int frames[] = {0, 1};
+			stand = new Animation2D(PlatformGame.enemiesAnimation, frames, 8);
+			stand.play(true);
+		}
 	}
 	
 	@Override
 	protected void behavior() {
+		stand.update();
 		int mx = level.player.getCenterX() - getCenterX();
 		int my = level.player.getCenterY() - getCenterY();
 		if(mx*mx + my*my > (2*agressionRange*agressionRange)) return;

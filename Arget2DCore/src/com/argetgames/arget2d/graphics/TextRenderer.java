@@ -17,6 +17,10 @@ public class TextRenderer {
 		
 	}
 	
+	public String getCharacters() {
+		return characters;
+	}
+	
 	private void drawCharacter(Renderer2D renderer, int x, int y, char character, int color){
 		int index = characters.indexOf(character);
 		if(index < 0)index = 0;

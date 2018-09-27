@@ -24,8 +24,16 @@ public class Level {
 		player = new Player(64, 128, 16, 16 , this);
 		livings.add(player);
 		livings.add(new Enemy(16*16, 64, 16, 16 , this));
-		livings.add(new Jumper(16*74, 128, 16, 16 , this));
 		livings.add(new Jumper(16*36, 128, 16, 16 , this));
+		livings.add(new Jumper(16*70, 64, 16, 16 , this));
+		livings.add(new Enemy(16*73, 64, 16, 16 , this));
+		livings.add(new Jumper(16*104, 16, 16, 16 , this));
+		livings.add(new Enemy(16*98, 16, 16, 16 , this));
+		
+		livings.add(new Jumper(16*134, 16, 16, 16 , this));
+		livings.add(new Enemy(16*135, 16, 16, 16 , this));
+		livings.add(new Enemy(16*136, 16, 16, 16 , this));
+		livings.add(new Jumper(16*137, 16, 16, 16 , this));
 		PlatformGame.camera.set(player.getCenterX() - PlatformGame.globalWidth/2, 
 				player.getCenterY() - PlatformGame.globalHeight/2);
 	}
