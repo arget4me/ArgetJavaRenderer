@@ -17,6 +17,7 @@ public class PlatformGame extends Gameloop {
 
 	public static Image2D aspect, tempPlayer;
 	private static SpriteSheet fontSheet, tileSheet, tileSheetSolidMap;
+	public static SpriteSheet playerAnimation; 
 	public static TextRenderer textRenderer;
 
 	private GameStateManager gsm;
@@ -33,7 +34,8 @@ public class PlatformGame extends Gameloop {
 	protected void onCreate() {
 		
 		aspect = new Image2D("res/images/aspectTest.png");
-		tempPlayer = new Image2D("res/images/tempPlayer.png");
+		tempPlayer = new Image2D("res/images/tempPlayer2.png");
+		playerAnimation = new SpriteSheet("res/images/tempPlayerAnimation.png", 16, 16);
 //		fontSheet = new SpriteSheet("res/images/free_assets/SpriteFonts/SpriteFonts16x16.png", 16, 16);
 //		textRenderer = new TextRenderer(fontSheet, " !\"#$£€%&\'()*+,-./0123456789;:<=>?°`^@ABCDEFGHIJKLMNOPQRSTUVWXYZ|~[\\]_", 0xFFFFFFFF);
 		fontSheet = new SpriteSheet("res/images/8bitFont.png", 8, 8);

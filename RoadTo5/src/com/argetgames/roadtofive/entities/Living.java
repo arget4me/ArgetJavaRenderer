@@ -24,7 +24,7 @@ public abstract class Living extends Entity {
 		//DO NOTHING
 	}
 	
-	private void drawHealthBar(Renderer2D renderer) {
+	protected void drawHealthBar(Renderer2D renderer) {
 		renderer.useCamera(true);
 		if(health < maxHealth) {
 			renderer.fillRect(x, y-5, width, 4, 0xFFFF0000);

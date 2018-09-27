@@ -42,6 +42,10 @@ public abstract class Entity extends Rectangle {
 		acc_y = ((-2) * (jumpHeight)) / (secondsToPeak * secondsToPeak);
 	}
 	
+	protected double getXMove() {
+		return xMove;
+	}
+	
 	public int getID() {
 		return ID;
 	}

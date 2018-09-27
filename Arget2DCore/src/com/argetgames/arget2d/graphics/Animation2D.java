@@ -31,10 +31,13 @@ public class Animation2D {
 				frameCounter = 0;
 				currentFrame++;
 				if (currentFrame >= frameOrder.length) {
-					currentFrame = 0;
 					playedOnce = true;
-					if(!loop)
+					if(!loop) {
+						currentFrame =  frameOrder.length -1;
 						playing = false;
+					} else {
+						currentFrame = 0;
+					}
 				}
 			}
 		}
