@@ -14,7 +14,7 @@ public class Player extends Living {
 
 	private int shootDelay = 0;
 	private int shootsPerSecond = 6;
-	private double regenPerSeconds = 1.0/2.0;
+	private double regenPerSeconds = 1.0/1.0;
 	private int regenDelay = (int)(PlatformGame.global_ups / regenPerSeconds);
 	private Animation2D walkR, walkL, standR, standL, jumpL, jumpR;
 	private int walking = 0;

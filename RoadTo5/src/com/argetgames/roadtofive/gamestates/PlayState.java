@@ -42,7 +42,7 @@ public class PlayState extends GameState {
 			return;
 		}
 		
-		if(level_00.player.dead || Mouse.getMouse().isButtonClicked(MouseButton.RIGHT))
+		if(Mouse.getMouse().isButtonClicked(MouseButton.RIGHT))
 			restart();
 	
 		level_00.update();
