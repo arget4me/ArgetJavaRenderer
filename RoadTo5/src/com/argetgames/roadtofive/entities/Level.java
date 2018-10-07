@@ -35,7 +35,7 @@ public class Level {
 			}
 		}
 		
-		if(livings.size() < 2)
+		if(livings.size() < 2 && (player == null || boss == null))
 			return;
 		
 		if(player == null) {
@@ -89,7 +89,7 @@ public class Level {
 		ArrayList<Living> collisions = new ArrayList<Living>();
 		for(int i = 0; i < livings.size(); i++) {
 			Living l = livings.get(i);
-			if(!l.dead && l.getID() != parentID && l.collision(entity)) {
+			if(!l.dead && l.getTeamID() != parentID && l.collision(entity)) {
 				collisions.add(l);
 			}
 		}

@@ -4,10 +4,15 @@ import com.argetgames.arget2d.graphics.Renderer2D;
 
 public abstract class Living extends Entity {
 	
+	protected static final int PLAYER_TEAM_ID = 0;
+	protected static final int ENEMY_TEAM_ID = 1;
+	protected static final int OTHER_TEAM_ID = 2;
+	
 	public boolean dead = false;
 	protected int maxHealth = 100;
 	protected int health = maxHealth;
 	protected double moveSpeed = 1.0;
+	protected int teamID = -1;
 
 	public Living(int x, int y, int width, int height, Level level) {
 		super(x, y, width, height, 16 * 4.0, 1.0 / 2.7, level);
@@ -22,6 +27,10 @@ public abstract class Living extends Entity {
 	@Override
 	protected void onTileCollision() {
 		//DO NOTHING
+	}
+	
+	public int getTeamID() {
+		return teamID;
 	}
 	
 	protected void drawHealthBar(Renderer2D renderer) {

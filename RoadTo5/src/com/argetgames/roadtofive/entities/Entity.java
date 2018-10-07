@@ -5,7 +5,6 @@ import com.argetgames.arget2d.menu.Rectangle;
 import com.argetgames.roadtofive.PlatformGame;
 
 public abstract class Entity extends Rectangle {
-	
 
 	protected Level level;
 	private static int nextID = 0;
@@ -166,11 +165,12 @@ public abstract class Entity extends Rectangle {
 	protected abstract void behavior();
 	
 	protected void startJump() {
-		if (!onGround || jumping) {
+		if (jumping) {
 			return;
 		}
 		jumping = true;
 		falling = false;
+		onGround = false;
 		vel_y = vel0_y;
 	}
 	

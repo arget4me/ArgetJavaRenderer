@@ -30,8 +30,9 @@ public class Jumper extends Enemy {
 		
 		if(shootDelay <= 0) {
 			double angle = Math.atan2(my, mx);
-			level.spawnProjectile(getCenterX(), getCenterY(), 0.8, angle, 1, 0.4, getID());
-			startJump();
+			level.spawnProjectile(getCenterX(), getCenterY(), 0.8, angle, 1, 0.4, teamID);
+			if(onGround)
+				startJump();
 			shootDelay = (int)(PlatformGame.global_ups / shootsPerSecond);
 			
 		}else {

@@ -15,6 +15,7 @@ public class Enemy extends Living{
 	
 	public Enemy(int x, int y, int width, int height, Level level) {
 		super(x, y, width, height, level);
+		teamID = ENEMY_TEAM_ID;
 		maxHealth = 60;
 		health = maxHealth;
 		moveSpeed = 1.2;
@@ -34,7 +35,7 @@ public class Enemy extends Living{
 		
 		if(shootDelay <= 0) {
 			double angle = Math.atan2(my, mx);
-			level.spawnProjectile(getCenterX(), getCenterY(), 6, angle, 6, 0.4, getID());
+			level.spawnProjectile(getCenterX(), getCenterY(), 6, angle, 6, 0.4, teamID);
 			shootDelay = (int)(PlatformGame.global_ups / shootsPerSecond);
 			
 		}else {
@@ -42,7 +43,8 @@ public class Enemy extends Living{
 		}
 		
 		if(getCenterY() - level.player.getCenterY() > height*4)
-			startJump();
+			if(onGround)
+				startJump();
 		
 		if(level.player.getCenterX() > getCenterX()+2) {
 			dir = 1;
@@ -58,7 +60,9 @@ public class Enemy extends Living{
 	protected void onTileCollision() {
 		if(dir == 0)return;
 		if(level.checkCollisionStatic(this, dir, 0)){
-			startJump();
+			if(onGround) {
+				startJump();
+			}
 		}
 	}
 	

@@ -31,7 +31,7 @@ public class Boss extends Enemy{
 		
 		if(shootDelay <= 0) {
 			double angle = Math.atan2(my, mx);
-			level.spawnProjectile(getCenterX(), getCenterY(), 4, angle, 14, 1.0, getID());
+			level.spawnProjectile(getCenterX(), getCenterY(), 4, angle, 14, 1.0, teamID);
 			shootDelay = (int)(PlatformGame.global_ups / shootsPerSecond);
 			
 		}else {

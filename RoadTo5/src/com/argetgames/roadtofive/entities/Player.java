@@ -22,6 +22,7 @@ public class Player extends Living {
 	
 	public Player(int x, int y, int width, int height, Level level) {
 		super(x, y, width, height, level);
+		teamID = PLAYER_TEAM_ID;
 		moveSpeed = 1.5;
 		{
 			int frames[] = {0, 1, 2, 3, 4, 5};
@@ -113,7 +114,7 @@ public class Player extends Living {
 				int my = Mouse.getMouseY() - PlatformGame.globalHeight/2;
 				double angle = Math.atan2(my, mx);
 				
-				level.spawnProjectile(getCenterX(), getCenterY(), 5, angle, 5, 0.5, getID());
+				level.spawnProjectile(getCenterX(), getCenterY(), 5, angle, 5, 0.5, teamID);
 				shootDelay = PlatformGame.global_ups / shootsPerSecond;
 			}
 		}else {
