@@ -62,6 +62,10 @@ public class Projectile extends Entity {
 		return (collisions.size() > 0);
 	}
 	
+	public boolean handleCollisionStatic(int dx, int dy) {
+		return level.checkCollisionStaticRedOnly(this, dx, dy);
+	}
+	
 	@Override
 	protected void onTileCollision() {
 		dead = true;

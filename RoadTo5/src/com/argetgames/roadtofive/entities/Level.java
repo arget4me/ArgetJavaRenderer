@@ -12,34 +12,77 @@ public class Level {
 	
 	private Tilemap map;
 	private ArrayList<Living> livings;
-	public Living player;
-	private Boss boss;
+	public Living player = null;
+	private Boss boss = null;
 	
 	private ArrayList<Projectile> projectiles;
 	private boolean victory = false, defeat = false;
 	
 	
-	public Level(Tilemap map) {
+	public Level(Tilemap map, Tilemap entities) {
 		this.map = map;
 		projectiles = new ArrayList<Projectile>();
 		livings = new ArrayList<Living>();
-		player = new Player(64, 128, 16, 16 , this);
-		livings.add(player);
-		livings.add(new Enemy(16*16, 64, 16, 16 , this));
-		livings.add(new Jumper(16*36, 128, 16, 16 , this));
-		livings.add(new Jumper(16*70, 64, 16, 16 , this));
-		livings.add(new Enemy(16*73, 64, 16, 16 , this));
-		livings.add(new Jumper(16*104, 16, 16, 16 , this));
-		livings.add(new Enemy(16*98, 16, 16, 16 , this));
 		
-		livings.add(new Jumper(16*134, 16, 16, 16 , this));
-		livings.add(new Enemy(16*135, 16, 16, 16 , this));
-		livings.add(new Enemy(16*136, 16, 16, 16 , this));
-		livings.add(new Jumper(16*137, 16, 16, 16 , this));
-		boss = new Boss(16*150, 16, 32, 32, this);
+		int w = entities.getWidth();
+		int h = entities.getHeight();
+		int tw = entities.getTileWidth();
+		int th = entities.getTileHeight();
+		for(int y = 0; y < h; y++) {
+			for(int x = 0; x < w; x++) {
+				int ID = entities.getTileID(x, y);
+				spawn(ID, x, y, tw, th);
+			}
+		}
+		
+		if(livings.size() < 2)
+			return;
+		
+		if(player == null) {
+			Living l = livings.get(0);
+			livings.remove(0);
+			player = new Player(l.x, l.y, l.width, l.height, this);
+			PlatformGame.camera.set(player.getCenterX() - PlatformGame.globalWidth/2, 
+					player.getCenterY() - PlatformGame.globalHeight/2);
+		}
+		
+		if(boss == null) {
+			Living l = livings.get(livings.size()-1);
+			livings.remove(livings.size()-1);
+			boss = new Boss(l.x, l.y, l.width*2, l.height*2, this);
+		}
+		
+		livings.add(player);
 		livings.add(boss);
-		PlatformGame.camera.set(player.getCenterX() - PlatformGame.globalWidth/2, 
-				player.getCenterY() - PlatformGame.globalHeight/2);
+	}
+	
+	private void spawn(int ID, int x, int y, int tw, int th) {
+		Living l = null;
+		switch(ID) {
+		case 0:
+			if(player == null) {
+				player = new Player(x * tw, y*th, tw, th, this);
+				PlatformGame.camera.set(player.getCenterX() - PlatformGame.globalWidth/2, 
+						player.getCenterY() - PlatformGame.globalHeight/2);
+			}
+			break;
+		case 1:
+			l = new Jumper(x * tw, y*th, tw, th, this);
+			break;
+		case 2:
+			l = new Enemy(x * tw, y*th, tw, th, this);
+			break;
+		case 3:
+			if(boss == null) {
+				boss = new Boss(x * tw, y*th, tw*2, th*2, this);
+			}
+			break;
+		default:
+			break;
+		}
+		if(l != null) {
+			livings.add(l);
+		}
 	}
 	
 	public ArrayList<Living> checkCollisionDynamic(Entity entity, int parentID, int dx, int dy) {
@@ -57,6 +100,14 @@ public class Level {
 	
 	public boolean checkCollisionStatic(Entity entity, int dx, int dy) {
 		return map.checkCollision(entity, dx, dy);
+	}
+	
+	public boolean checkCollisionStaticRedOnly(Entity entity, int dx, int dy) {
+		return map.checkCollisionRedOnly(entity, dx, dy);
+	}
+	
+	public boolean checkCollisionStaticBlueOnly(Entity entity, int dx, int dy) {
+		return map.checkCollisionBlueOnly(entity, dx, dy);
 	}
 	
 	public void spawnProjectile(int x, int y, double speed, double angle, int DMG, int parentID) {
@@ -146,7 +197,5 @@ public class Level {
 		}
 	}
 
-
-	
 
 }

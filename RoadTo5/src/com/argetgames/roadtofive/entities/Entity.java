@@ -51,6 +51,7 @@ public abstract class Entity extends Rectangle {
 	}
 	
 	protected abstract void onTileCollision();
+	
 	public void onDynamicCollision() {
 		
 	}

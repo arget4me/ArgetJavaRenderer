@@ -16,7 +16,8 @@ import com.argetgames.roadtofive.gamestates.PlayState;
 public class PlatformGame extends Gameloop {
 
 	public static Image2D aspect, tempPlayer;
-	private static SpriteSheet fontSheet, tileSheet, tileSheetSolidMap;
+	private static SpriteSheet fontSheet;
+	public static SpriteSheet tileSheet, tileSheetSolidMap, enitities;
 	public static SpriteSheet playerAnimation, enemiesAnimation; 
 	public static TextRenderer textRenderer;
 
@@ -28,7 +29,7 @@ public class PlatformGame extends Gameloop {
 	
 	public PlatformGame(int width, int height, int scale) {
 		super(width, height, scale, true);
-//		debug_log = false;
+		debug_log = false;
 	}
 
 	protected void onCreate() {
@@ -48,10 +49,12 @@ public class PlatformGame extends Gameloop {
 		tileSheet = new SpriteSheet("res/images/tileset.png", 16, 16);
 		tileSheetSolidMap = new SpriteSheet("res/images/tilesetSolidMap.png", 16, 16);
 		
+		enitities = new SpriteSheet("res/images/entities.png", 16, 16);
+		
 		gsm = new GameStateManager(3);
 		gsm.addAndSetState(new MenuState(gsm), MENU_STATE);
-		gsm.addState(new PlayState(gsm, tileSheet), PLAY_STATE);
-		gsm.addState(new EditorState(gsm, tileSheet, tileSheetSolidMap), EDITOR_STATE);
+		gsm.addState(new PlayState(gsm), PLAY_STATE);
+		gsm.addState(new EditorState(gsm), EDITOR_STATE);
 		
 
 	}

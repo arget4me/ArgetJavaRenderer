@@ -38,6 +38,7 @@ public class TilemapEditor extends Tilemap {
 	private Rectangle paintedRectangle = null, editingRectangle = null;
 	private Rectangle[] selectionCorners = new Rectangle[4];
 	private int rectangleIndex = -1;
+	public boolean hideTools = false;
 	
 	//Test play
 	private boolean testPlaying = false;
@@ -157,6 +158,7 @@ public class TilemapEditor extends Tilemap {
 	private void updateToolButtons(int mx, int my){
 		testButton.update(mx, my);
 		if(testButton.getClicked()){
+			hideTools = true;
 			setCurrentTile(0);
 			testPlaying = true;
 			return;
@@ -469,6 +471,7 @@ public class TilemapEditor extends Tilemap {
 			
 			Gameloop.camera.set(testPlayer.x - Gameloop.globalWidth/2, testPlayer.y - Gameloop.globalHeight/2);
 			if(testButton.getClicked()){
+				hideTools = false;
 				testPlaying = false;
 			}
 		}
@@ -479,47 +482,51 @@ public class TilemapEditor extends Tilemap {
 	}
 	
 	private void drawToolButtons(Renderer2D renderer){
-		gridButton.draw(renderer, 0xFF444444);
-		drawRedSolidButton.draw(renderer, 0xFFFF0000);
-		drawBlueSolidButton.draw(renderer, 0xFF0000FF);
-		editSolids.draw(renderer, 0xFF00FF00);
-		toggleShowSolids.draw(renderer, 0xFFFFFF00);
-		erasorButton.draw(renderer, 0xFF6666);
+		if(!hideTools && !testPlaying) {
+			gridButton.draw(renderer, 0xFF444444);
+			drawRedSolidButton.draw(renderer, 0xFFFF0000);
+			drawBlueSolidButton.draw(renderer, 0xFF0000FF);
+			editSolids.draw(renderer, 0xFF00FF00);
+			toggleShowSolids.draw(renderer, 0xFFFFFF00);
+			erasorButton.draw(renderer, 0xFF6666);
+			saveButton.draw(renderer, 0xFFFF0000);
+			loadButton.draw(renderer, 0xFF0000FF);
+		}
 		testButton.draw(renderer, 0xFF444444);
-		saveButton.draw(renderer, 0xFFFF0000);
-		loadButton.draw(renderer, 0xFF0000FF);
 	}
 
 	public void draw(Renderer2D renderer) {
 		super.draw(renderer);
-		renderer.useCamera(true);
-		if(paintedRectangle != null){
-			int color = 0xFFFF0000;
-			if(drawBlueSolid)
-				color = 0xFF0000FF;
-			paintedRectangle.draw(renderer, color);
-		}
-		
-		if(editingRectangle != null){
-			renderer.drawRect(editingRectangle.x, editingRectangle.y, editingRectangle.width, editingRectangle.height, 0xFF008800);
-			for(int i = 0; i < selectionCorners.length; i++){
-				selectionCorners[i].draw(renderer, 0xFF00FF00);
+		if(!hideTools && !testPlaying) {//to be able to test how it would look in game.
+			renderer.useCamera(true);
+			if(paintedRectangle != null){
+				int color = 0xFFFF0000;
+				if(drawBlueSolid)
+					color = 0xFF0000FF;
+				paintedRectangle.draw(renderer, color);
 			}
+			
+			if(editingRectangle != null){
+				renderer.drawRect(editingRectangle.x, editingRectangle.y, editingRectangle.width, editingRectangle.height, 0xFF008800);
+				for(int i = 0; i < selectionCorners.length; i++){
+					selectionCorners[i].draw(renderer, 0xFF00FF00);
+				}
+			}
+			
+			renderer.useCamera(false);
+			renderer.fillRect(panelX, 0, panelWidth, Gameloop.globalHeight, 0xFF666666);
+			for (int i = 0; i < buttons.length; i++) {
+				if (buttons[i].y > startY - tileWidth)
+					buttons[i].draw(renderer, 0xFF333333);
+			}
+			renderer.fillRect(panelX, 0, panelWidth, startY, 0xFF666666);
+			renderer.fillRect(panelX, startY-1, getButtonX(5) + getButtonX(1) - padding, 1, 0xFF444444);
+			renderer.fillRect(panelX, 0, 1, Gameloop.globalHeight, 0xFF444444);
+			renderer.fillRect(panelX + getButtonX(5) + getButtonX(1) - padding, 0, 1, Gameloop.globalHeight, 0xFF444444);
+			
+			drawScroller(renderer);
 		}
-		
-		renderer.useCamera(false);
-		renderer.fillRect(panelX, 0, panelWidth, Gameloop.globalHeight, 0xFF666666);
-		for (int i = 0; i < buttons.length; i++) {
-			if (buttons[i].y > startY - tileWidth)
-				buttons[i].draw(renderer, 0xFF333333);
-		}
-		renderer.fillRect(panelX, 0, panelWidth, startY, 0xFF666666);
-		renderer.fillRect(panelX, startY-1, getButtonX(5) + getButtonX(1) - padding, 1, 0xFF444444);
-		renderer.fillRect(panelX, 0, 1, Gameloop.globalHeight, 0xFF444444);
-		renderer.fillRect(panelX + getButtonX(5) + getButtonX(1) - padding, 0, 1, Gameloop.globalHeight, 0xFF444444);
-		
 		drawToolButtons(renderer);
-		drawScroller(renderer);
 		renderer.useCamera(true);
 		if(testPlaying){
 			testPlayer.draw(renderer, 0xFF00FF00);

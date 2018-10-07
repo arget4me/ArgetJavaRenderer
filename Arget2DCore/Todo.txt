@@ -6,17 +6,19 @@ LevelEditor:
 : Edit rectangles: drag corners, delete.
 : Eraser button
 * Test play button -> Disables all editor logic handles simple sideScroller movement of square.
+* freeform testplay - no collision.
 : Top-down movement test play option.
 * Top-down restricted tile movement.
 : Save / Load TileMap.
 : Fix bug when erasing blue rectangles. Removes extra rectangles. SOLVED: had forgot to do the same thing for blueRectangles as for Red.
-* Layers
-* Separate entity layer or are they just as any other?// make a separate tilemap.
-* Combine rectangles that are side by side.
+* Layers:
+* Separate entity layer similar to tilemap, and save in the same file after the tilemap data.
+//* Combine rectangles that are side by side.
 
 TileMap:
 : Should it handle/check collision? How is blue and red rectangles handled? (Blue: solid from top. Red: full solid). 
 : Load from file
+* Should allow collision option to include or ignore blue-solid rectangles.
 
 Renderer2D:
 : Don't loop through pixels that are renderer outside of buffer. Handles camera also.
@@ -29,4 +31,4 @@ Rectangle:
 : Collision bug. checked bottom left corner of "other"-rectangle wrongly. accidentally checked (other.y + other.width -1) instead of (other.y + other.height -1)
 
 Gameloop:
-:QuickFix: Bug - Loop speeds up if after frame drop.
+:QuickFix: Bug - Loop speeds up after a frame drop.

@@ -388,6 +388,7 @@ public class Tilemap {
 			}
 		}
 		
+		//blue collision is only solid on top.
 		for(int i = 0; i < blueRectangles.length; i++){
 			if(temp.collision(blueRectangles[i])){
 				if(!rect.collision(blueRectangles[i]) && ya > 0){
@@ -396,6 +397,58 @@ public class Tilemap {
 			}
 		}
 		return false;
+	}
+	
+	public boolean checkCollisionRedOnly(Rectangle rect, int xa, int ya){
+		
+		Rectangle temp = new Rectangle(rect.x + xa, rect.y + ya, rect.width, rect.height);
+		//red collision is solid from all sides.
+		for(int i = 0; i < redRectangles.length; i++){
+			if(temp.collision(redRectangles[i])){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean checkCollisionBlueOnly(Rectangle rect, int xa, int ya){
+		
+		Rectangle temp = new Rectangle(rect.x + xa, rect.y + ya, rect.width, rect.height);
+		//blue collision is only solid on top.
+		for(int i = 0; i < blueRectangles.length; i++){
+			if(temp.collision(blueRectangles[i])){
+				if(!rect.collision(blueRectangles[i]) && ya > 0){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public int getWidth() {
+		return numTilesWide;
+	}
+	
+	public int getHeight() {
+		return numTilesHigh;
+	}
+	
+	public int getTileWidth() {
+		return tileWidth;
+	}
+	
+	public int getTileHeight() {
+		return tileHeight;
+	}
+	
+	public int getTileID(int x, int y) {
+		x %= numTilesWide;
+		if(x < 0) x += numTilesWide;
+		
+		y %= numTilesHigh;
+		if(y < 0) y += numTilesHigh;
+		
+		return tiles[x + y * numTilesWide];
 	}
 
 	private void drawSolids(Renderer2D renderer){
