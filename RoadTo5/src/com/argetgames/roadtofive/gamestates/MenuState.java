@@ -8,6 +8,7 @@ import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.graphics.TextRenderer;
 import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.roadtofive.PlatformGame;
+import com.argetgames.roadtofive.sound.SoundAPI;
 
 public class MenuState extends GameState {
 	
