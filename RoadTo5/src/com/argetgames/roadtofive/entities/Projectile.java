@@ -71,6 +71,7 @@ public class Projectile extends Entity {
 	@Override
 	protected void onTileCollision() {
 		dead = true;
+		SoundAPI.testPlaySound("hurt_1.wav", 0.6f);
 	}
 	
 	public void draw(Renderer2D renderer) {
