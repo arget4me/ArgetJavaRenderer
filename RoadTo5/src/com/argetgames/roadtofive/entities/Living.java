@@ -1,6 +1,7 @@
 package com.argetgames.roadtofive.entities;
 
 import com.argetgames.arget2d.graphics.Renderer2D;
+import com.argetgames.roadtofive.sound.SoundAPI;
 
 public abstract class Living extends Entity {
 	
@@ -20,8 +21,10 @@ public abstract class Living extends Entity {
 
 	protected void hurt(int amount) {
 		health -= amount;
-		if(health <= 0)
+		if(health <= 0){
 			dead = true;
+			SoundAPI.testPlaySound("explosion_1.wav", 0.6f);
+		}
 	}
 
 	@Override

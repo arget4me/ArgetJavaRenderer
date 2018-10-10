@@ -99,7 +99,7 @@ public class Player extends Living {
 				jumpL.play(false);
 				jumpR.play(false);
 				playJump = true;
-				SoundAPI.testPlaySound("free_assets/8-bit_Sound_Effects_Pack_001/Jump 2.wav", 0.6f);
+				SoundAPI.testPlaySound("jump_1.wav", 0.8f);
 				startJump();
 			}
 		}
@@ -118,7 +118,7 @@ public class Player extends Living {
 				
 				level.spawnProjectile(getCenterX(), getCenterY(), 5, angle, 5, 0.5, teamID);
 				shootDelay = PlatformGame.global_ups / shootsPerSecond;
-				SoundAPI.testPlaySound("free_assets/8-bit_Sound_Effects_Pack_001/Shoot 2.wav", 0.6f);
+				SoundAPI.testPlaySound("shoot_1.wav", 0.7f);
 			}
 		}else {
 			shootDelay--;

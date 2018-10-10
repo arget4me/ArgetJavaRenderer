@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.roadtofive.PlatformGame;
+import com.argetgames.roadtofive.sound.SoundAPI;
 
 public class Projectile extends Entity {
 
@@ -55,6 +56,7 @@ public class Projectile extends Entity {
 			onDynamicCollision(l);
 		}
 		dead = true;
+		SoundAPI.testPlaySound("hurt_1.wav", 0.6f);
 	}
 	
 	public boolean handleCollisionDynamic(int dx, int dy) {
