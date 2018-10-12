@@ -11,6 +11,7 @@ import com.argetgames.arget2d.tilemap.TilemapEditor;
 import com.argetgames.roadtofive.gamestates.EditorState;
 import com.argetgames.roadtofive.gamestates.MenuState;
 import com.argetgames.roadtofive.gamestates.PlayState;
+import com.argetgames.roadtofive.sound.SoundAPI;
 
 @SuppressWarnings("serial")
 public class PlatformGame extends Gameloop {
@@ -33,30 +34,30 @@ public class PlatformGame extends Gameloop {
 	}
 
 	protected void onCreate() {
-		
 		aspect = new Image2D("res/images/aspectTest.png");
 		tempPlayer = new Image2D("res/images/tempPlayer2.png");
 		playerAnimation = new SpriteSheet("res/images/tempPlayerAnimation.png", 16, 16);
 		enemiesAnimation = new SpriteSheet("res/images/enemiesAnimation.png", 16, 16);
-//		fontSheet = new SpriteSheet("res/images/free_assets/SpriteFonts/SpriteFonts16x16.png", 16, 16);
-//		textRenderer = new TextRenderer(fontSheet, " !\"#$£€%&\'()*+,-./0123456789;:<=>?°`^@ABCDEFGHIJKLMNOPQRSTUVWXYZ|~[\\]_", 0xFFFFFFFF);
+
 		fontSheet = new SpriteSheet("res/images/8bitFont.png", 8, 8);
 		textRenderer = new TextRenderer(fontSheet, " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0xFFFFFFFF);
-		
-//		tileSheet = new SpriteSheet("res/images/free_assets/SunnyLand/tileset.png", 16, 16);
-//		tileSheetSolidMap = new SpriteSheet("res/images/free_assets/SunnyLand/tileset_solidMap.png", 16, 16);
 		
 		tileSheet = new SpriteSheet("res/images/tileset.png", 16, 16);
 		tileSheetSolidMap = new SpriteSheet("res/images/tilesetSolidMap.png", 16, 16);
 		
 		enitities = new SpriteSheet("res/images/entities.png", 16, 16);
 		
+		SoundAPI.loadSound("explosion_1.wav");
+		SoundAPI.loadSound("hurt_1.wav");
+		SoundAPI.loadSound("jump_1.wav");
+		SoundAPI.loadSound("pickup_1.wav");
+		SoundAPI.loadSound("shoot_1.wav");
+		SoundAPI.loadSound("testSound.wav");
+		
 		gsm = new GameStateManager(3);
 		gsm.addAndSetState(new MenuState(gsm), MENU_STATE);
 		gsm.addState(new PlayState(gsm), PLAY_STATE);
 		gsm.addState(new EditorState(gsm), EDITOR_STATE);
-		
-
 	}
 
 	@Override

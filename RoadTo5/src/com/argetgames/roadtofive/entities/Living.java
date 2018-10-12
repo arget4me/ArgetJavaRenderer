@@ -23,7 +23,7 @@ public abstract class Living extends Entity {
 		health -= amount;
 		if(health <= 0){
 			dead = true;
-			SoundAPI.testPlaySound("explosion_1.wav", 0.6f);
+			SoundAPI.testPlaySound("explosion_1.wav", 0.7f);
 		}
 	}
 
