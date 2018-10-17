@@ -1,0 +1,17 @@
+
+* active
+: completed
+
+Bugs:
+* Sound spams when jumping is interrupted early. Jumping in a small space or under a solid platform.
+
+To be implemented:
+* Cutscenes.
+* More bosses.
+* More levels.
+* Options menu. control master sound.
+* Powerups / pickups.
+* Campaign menu.
+
+Ideas:
+* Puzzles, pickups/powers that interact with surrounding.

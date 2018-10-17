@@ -12,13 +12,13 @@ LevelEditor:
 : Save / Load TileMap.
 : Fix bug when erasing blue rectangles. Removes extra rectangles. SOLVED: had forgot to do the same thing for blueRectangles as for Red.
 * Layers:
-* Separate entity layer similar to tilemap, and save in the same file after the tilemap data.
+: Separate entity layer similar to tilemap, and save in the same file after the tilemap data.
 //* Combine rectangles that are side by side.
 
 TileMap:
 : Should it handle/check collision? How is blue and red rectangles handled? (Blue: solid from top. Red: full solid). 
 : Load from file
-* Should allow collision option to include or ignore blue-solid rectangles.
+: Should allow collision option to include or ignore blue-solid rectangles.
 
 Renderer2D:
 : Don't loop through pixels that are renderer outside of buffer. Handles camera also.
@@ -32,3 +32,4 @@ Rectangle:
 
 Gameloop:
 :QuickFix: Bug - Loop speeds up after a frame drop.
+* Bug - toggleFullscreen doesn't work on mac.
