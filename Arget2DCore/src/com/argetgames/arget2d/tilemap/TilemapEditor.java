@@ -1,8 +1,10 @@
 package com.argetgames.arget2d.tilemap;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.argetgames.arget2d.game.Gameloop;
 import com.argetgames.arget2d.graphics.Image2D;
@@ -192,15 +194,24 @@ public class TilemapEditor extends Tilemap {
 		saveButton.update(mx, my);
 		if(saveButton.getClicked()){
 			setCurrentTile(0);
-			final JFileChooser fc = new JFileChooser();
-			fc.showOpenDialog(null);
-			write(fc.getSelectedFile());
+			final JFileChooser fc = new JFileChooser(new File("res/maps/"));
+			fc.removeChoosableFileFilter(fc.getFileFilter());
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Arget Tilemap", FILE_TYPE);
+			fc.setFileFilter(filter);
+			fc.showSaveDialog(null);
+			File saveFile = fc.getSelectedFile();
+			if(!saveFile.getName().endsWith("." + FILE_TYPE))
+				saveFile = new File(saveFile.getPath() + "." + FILE_TYPE);
+			write(saveFile);
 		}
 		
 		loadButton.update(mx, my);
 		if(loadButton.getClicked()){
 			setCurrentTile(0);
-			final JFileChooser fc = new JFileChooser();
+			final JFileChooser fc = new JFileChooser(new File("res/maps/"));
+			fc.removeChoosableFileFilter(fc.getFileFilter());
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Arget Tilemap", FILE_TYPE);
+			fc.setFileFilter(filter);
 			fc.showOpenDialog(null);
 			load(fc.getSelectedFile());
 		}

@@ -21,16 +21,14 @@ public class Tilemap {
 	protected int[] entities;
 	private boolean showGrid = false;
 	protected boolean showSolids = false;
+	public static String FILE_TYPE = "agtm";
 
-	public Tilemap(int numTilesWide, int numTilesHigh, int tileWidth, int tileHeight, SpriteSheet tileSprites) {
-		this.numTilesWide = numTilesWide;
-		this.numTilesHigh = numTilesHigh;
+	public Tilemap(int numTilesWide, int numTilesHigh, int tileWidth, int tileHeight, SpriteSheet tileSprites) {		
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
-
-		tiles = new int[this.numTilesWide * this.numTilesHigh];
-		entities = new int[this.numTilesWide * this.numTilesHigh];
 		this.tileSprites = tileSprites;
+
+		initTiles(numTilesWide, numTilesHigh);
 		fillWithEmptyTiles();
 	}
 	
@@ -40,6 +38,13 @@ public class Tilemap {
 		this.tileSprites = tileSprites;
 		
 		load(path);
+	}
+	
+	private void initTiles(int numTilesWide, int numTilesHigh) {
+		this.numTilesWide = numTilesWide;
+		this.numTilesHigh = numTilesHigh;
+		tiles = new int[this.numTilesWide * this.numTilesHigh];
+		entities = new int[this.numTilesWide * this.numTilesHigh];
 	}
 	
 	public void setEntitiesSprite(SpriteSheet entitySprites){
@@ -60,16 +65,22 @@ public class Tilemap {
 	}
 	
 	protected void load(String path){
-		load(new File(path));
+		if(!path.endsWith("." + FILE_TYPE) || !load(new File(path))){
+			initTiles(100, 100);
+			fillWithEmptyTiles();
+		}
+			
 	}
 	
-	protected void load(File file){
-		if(file == null)return;
+	protected boolean load(File file){
+		if(file == null)return false;
 		try {
 			byte[] data = Files.readAllBytes(file.toPath());
 			load(data);
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -94,7 +105,6 @@ public class Tilemap {
 				offset++;
 			}
 		}
-		
 		
 		int redLength = 0;
 		for(int i = 0; i < Integer.BYTES; i++){
@@ -123,8 +133,6 @@ public class Tilemap {
 			}
 			red[i] = new Rectangle(x, y, width, height);
 		}
-		
-		
 
 		int blueLength = 0;
 		for(int i = 0; i < Integer.BYTES; i++){
