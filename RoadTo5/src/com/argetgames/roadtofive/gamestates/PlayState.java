@@ -40,21 +40,21 @@ public class PlayState extends GameState {
 		    }
 			input.close();
 			int n = levelNames.size();
-			if(n > 2 && n % 2 == 1) {
-				n--;
-			}
-			maps = new Tilemap[n/2];
-			entities = new Tilemap[n/2];
-			for(int i = 0; i < n/2; i++) {
+//			if(n > 2 && n % 2 == 1) {
+//				n--;
+//			}
+			maps = new Tilemap[n];
+//			entities = new Tilemap[n/2];
+			for(int i = 0; i < n; i++) {
 				maps[i] = new Tilemap("res/maps/" + levelNames.get(i*2), 16, 16, this.tileSheet);
-				entities[i] = new Tilemap("res/maps/" + levelNames.get(i*2 +1), 16, 16, this.tileSheet);
+//				entities[i] = new Tilemap("res/maps/" + levelNames.get(i*2 +1), 16, 16, this.tileSheet);
 			}
 			
 //			map_00 = new Tilemap("res/maps/map_00", 16, 16, this.tileSheet);
 //			entities_00 = new Tilemap("res/maps/entities_00", 16, 16, this.tileSheet);
 			map_00 = maps[0];
-			entities_00 = entities[0];
-			level_00 = new Level(map_00, entities_00);
+//			entities_00 = entities[0];
+			level_00 = new Level(map_00);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -65,8 +65,8 @@ public class PlayState extends GameState {
 	private void restart(){
 		currentMap = (currentMap + 1) % maps.length;
 		map_00 = maps[currentMap];
-		entities_00 = entities[currentMap];
-		level_00 = new Level(map_00, entities_00);
+//		entities_00 = entities[currentMap];
+		level_00 = new Level(map_00);
 	}
 
 	@Override

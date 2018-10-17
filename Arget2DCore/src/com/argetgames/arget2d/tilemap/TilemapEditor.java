@@ -19,13 +19,14 @@ public class TilemapEditor extends Tilemap {
 
 	private int panelWidth;
 	private int panelX;
-	private Image2DButton[] buttons;
+	private Image2DButton[] buttons, buttons_entities;
 	private Image2DButton gridButton, drawRedSolidButton, drawBlueSolidButton, editSolids, toggleShowSolids, erasorButton;
-	private Image2DButton testButton, saveButton, loadButton;
+	private Image2DButton testButton, saveButton, loadButton, entitiesButton;
 	private static Image2D
 	gridImg, redRectImg, blueBlueImg, editRectImg, showHideImg, eraserImg,
-	playImg, saveImg, loadImg;
+	playImg, saveImg, loadImg, toggleEntityImg;
 	private int buttonsPerLine, padding, scrollerSize, buttonWidth, scrollMax, startY;
+	private int scrollMax_entities;
 	private Scroller scroller;
 	private double panSpeed = 4.5;
 
@@ -39,6 +40,8 @@ public class TilemapEditor extends Tilemap {
 	private Rectangle[] selectionCorners = new Rectangle[4];
 	private int rectangleIndex = -1;
 	public boolean hideTools = false;
+	
+	private boolean paintEntities = false;
 	
 	//Test play
 	private boolean testPlaying = false;
@@ -62,6 +65,7 @@ public class TilemapEditor extends Tilemap {
 		playImg = new Image2D("/images/play.png", true);
 		saveImg = new Image2D("/images/save.png", true);
 		loadImg = new Image2D("/images/load.png", true);
+		toggleEntityImg = new Image2D("/images/toggleEntity.png", true);
 		testPlayer = new Rectangle(0, 0, tileWidth, tileHeight);
 		for(int i = 0; i < selectionCorners.length; i++){
 			selectionCorners[i] = new Rectangle(0, 0, 1, 1);
@@ -105,6 +109,8 @@ public class TilemapEditor extends Tilemap {
 		testButton = new Image2DButton(panelX + getButtonX(0), padding + (buttonWidth + padding), buttonWidth, buttonWidth, playImg);
 		saveButton = new Image2DButton(panelX + getButtonX(1), padding + (buttonWidth + padding), buttonWidth, buttonWidth, saveImg);
 		loadButton = new Image2DButton(panelX + getButtonX(2), padding + (buttonWidth + padding), buttonWidth, buttonWidth, loadImg);
+		entitiesButton = new Image2DButton(panelX + getButtonX(3), padding + (buttonWidth + padding), buttonWidth, buttonWidth, toggleEntityImg);
+		
 		startY = (buttonWidth + padding * 2) * 4;
 		for (int i = 0; i < buttons.length; i++) {
 			int xa = getButtonX(i);
@@ -116,6 +122,25 @@ public class TilemapEditor extends Tilemap {
 		scrollMax = startY + scrollMax * (buttonWidth + padding) - (Gameloop.globalHeight - (buttonWidth + padding));
 		if (scrollMax < 0)
 			scrollMax = 0;
+	}
+	
+	public void setEntitiesSprite(SpriteSheet entitySprites){
+		super.setEntitiesSprite(entitySprites);
+		int numSprites = entitySprites.getNumSprites();
+		buttons_entities = new Image2DButton[numSprites];
+		
+		for (int i = 0; i < buttons_entities.length; i++) {
+			int xa = getButtonX(i);
+			int ya = getButtonY(i);
+			scrollMax_entities = (i / buttonsPerLine);
+			buttons_entities[i] = new Image2DButton(panelX + xa, ya, buttonWidth, buttonWidth, entitySprites.getSprite(i));
+		}
+
+		scrollMax_entities = startY + scrollMax_entities * (buttonWidth + padding) - (Gameloop.globalHeight - (buttonWidth + padding));
+		if (scrollMax_entities < 0)
+			scrollMax_entities = 0;
+		
+		
 	}
 	
 	private void resetDrawRectangle(){
@@ -178,6 +203,13 @@ public class TilemapEditor extends Tilemap {
 			final JFileChooser fc = new JFileChooser();
 			fc.showOpenDialog(null);
 			load(fc.getSelectedFile());
+		}
+		
+		if(entitySprites != null){
+			entitiesButton.update(mx, my);
+			if(entitiesButton.getClicked()){
+				paintEntities = !paintEntities;
+			}
 		}
 		
 		gridButton.update(mx, my);
@@ -404,8 +436,12 @@ public class TilemapEditor extends Tilemap {
 			if (xT >= 0 && xT < numTilesWide) {
 				if (yT >= 0 && yT < numTilesHigh) {
 					if(tiles[xT + yT * numTilesWide] != currentTile){
-						tiles[xT + yT * numTilesWide] = currentTile;
-						autoSolidRectangle(xT, yT, currentTile);
+						if(paintEntities && entitySprites != null){
+							entities[xT + yT * numTilesWide] = currentTile;
+						}else{
+							tiles[xT + yT * numTilesWide] = currentTile;
+							autoSolidRectangle(xT, yT, currentTile);
+						}
 					}
 				}
 			}
@@ -427,13 +463,26 @@ public class TilemapEditor extends Tilemap {
 			
 			updateToolButtons(mx, my);
 			scroller.update();
-			for (int i = 0; i < buttons.length; i++) {
-				int ya = getButtonY(i) - (int) (scroller.getScrollValue() * scrollMax);
-				buttons[i].y = ya;
-				if (buttons[i].y > startY - tileWidth && buttons[i].y < Gameloop.globalHeight  && my >= startY) {
-					buttons[i].update(mx, my);
-					if (buttons[i].getClicked()) {
-						setCurrentTile(i);
+			if(paintEntities){
+				for (int i = 0; i < buttons_entities.length; i++) {
+					int ya = getButtonY(i) - (int) (scroller.getScrollValue() * scrollMax_entities);
+					buttons_entities[i].y = ya;
+					if (buttons_entities[i].y > startY - tileWidth && buttons_entities[i].y < Gameloop.globalHeight  && my >= startY) {
+						buttons_entities[i].update(mx, my);
+						if (buttons_entities[i].getClicked()) {
+							setCurrentTile(i);
+						}
+					}
+				}
+			}else {
+				for (int i = 0; i < buttons.length; i++) {
+					int ya = getButtonY(i) - (int) (scroller.getScrollValue() * scrollMax);
+					buttons[i].y = ya;
+					if (buttons[i].y > startY - tileWidth && buttons[i].y < Gameloop.globalHeight  && my >= startY) {
+						buttons[i].update(mx, my);
+						if (buttons[i].getClicked()) {
+							setCurrentTile(i);
+						}
 					}
 				}
 			}
@@ -491,6 +540,8 @@ public class TilemapEditor extends Tilemap {
 			erasorButton.draw(renderer, 0xFF6666);
 			saveButton.draw(renderer, 0xFFFF0000);
 			loadButton.draw(renderer, 0xFF0000FF);
+			if(entitySprites != null)
+				entitiesButton.draw(renderer, 0xFF00FF00);
 		}
 		testButton.draw(renderer, 0xFF444444);
 	}
@@ -515,10 +566,18 @@ public class TilemapEditor extends Tilemap {
 			
 			renderer.useCamera(false);
 			renderer.fillRect(panelX, 0, panelWidth, Gameloop.globalHeight, 0xFF666666);
-			for (int i = 0; i < buttons.length; i++) {
-				if (buttons[i].y > startY - tileWidth)
-					buttons[i].draw(renderer, 0xFF333333);
+			if(paintEntities){
+				for (int i = 0; i < buttons_entities.length; i++) {
+					if (buttons_entities[i].y > startY - tileWidth)
+						buttons_entities[i].draw(renderer, 0xFF333333);
+				}
+			}else {
+				for (int i = 0; i < buttons.length; i++) {
+					if (buttons[i].y > startY - tileWidth)
+						buttons[i].draw(renderer, 0xFF333333);
+				}				
 			}
+			
 			renderer.fillRect(panelX, 0, panelWidth, startY, 0xFF666666);
 			renderer.fillRect(panelX, startY-1, getButtonX(5) + getButtonX(1) - padding, 1, 0xFF444444);
 			renderer.fillRect(panelX, 0, 1, Gameloop.globalHeight, 0xFF444444);

@@ -15,9 +15,10 @@ public class Tilemap {
 	protected int numTilesHigh;
 	protected int tileWidth;
 	protected int tileHeight;
-	protected SpriteSheet tileSprites;
+	protected SpriteSheet tileSprites, entitySprites = null;
 	protected Rectangle[] redRectangles = new Rectangle[0];
 	protected Rectangle[] blueRectangles = new Rectangle[0];
+	protected int[] entities;
 	private boolean showGrid = false;
 	protected boolean showSolids = false;
 
@@ -28,6 +29,7 @@ public class Tilemap {
 		this.tileHeight = tileHeight;
 
 		tiles = new int[this.numTilesWide * this.numTilesHigh];
+		entities = new int[this.numTilesWide * this.numTilesHigh];
 		this.tileSprites = tileSprites;
 		fillWithEmptyTiles();
 	}
@@ -40,9 +42,14 @@ public class Tilemap {
 		load(path);
 	}
 	
+	public void setEntitiesSprite(SpriteSheet entitySprites){
+		this.entitySprites = entitySprites;
+	}
+	
 	protected void fillWithEmptyTiles() {
 		for (int i = 0; i < tiles.length; i++) {
 			tiles[i] = -1;
+			entities[i] = -1;
 		}
 	}
 
@@ -146,11 +153,23 @@ public class Tilemap {
 			}
 			blue[i] = new Rectangle(x, y, width, height);
 		}
+		
+		
+		
+		int[] localEntities = new int[tilesHigh * tilesWide];
+		for(int i = 0; i < localEntities.length; i++){
+			for(int j = 0; j < Integer.BYTES; j++) {
+				localEntities[i] |= (tilemapData[offset] & 0xFF) << (8*j);
+				offset++;
+			}
+		}
+		
 		tiles = localTiles;
 		numTilesWide = tilesWide;
 		numTilesHigh = tilesHigh;
 		redRectangles = red;
 		blueRectangles = blue;
+		entities = localEntities;
 	}
 	
 	protected byte[] getDataTilemap(){
@@ -161,6 +180,7 @@ public class Tilemap {
 		int redAttributesSize = (redRectangles.length * 4) * Integer.BYTES;
 		int blueLengthNumberSize = 1 * Integer.BYTES;
 		int blueAttributesSize = (blueRectangles.length * 4) * Integer.BYTES;
+		int entitiesSize = tilesSize;
 //		String spritesheetPath
 //		int spriteSheetLengthSize = 1 * Integer.BYTES;
 //		int spriteSheetLength = spritesheetPath.getBytes().length;
@@ -173,6 +193,7 @@ public class Tilemap {
 		size += redAttributesSize;
 		size += blueLengthNumberSize;
 		size += blueAttributesSize;
+		size += entitiesSize;
 //		size += spriteSheetLengthSize;
 //		size += spriteSheetLength;
 		byte[] data = new byte[size];
@@ -238,6 +259,13 @@ public class Tilemap {
 			}
 			for(int j = 0; j < Integer.BYTES; j++) {
 				data[offset] = (byte) ((blueRectangles[i].height >> (8*j)) & 0xFF);
+				offset++;
+			}
+		}
+		
+		for(int i = 0; i < tiles.length; i++){
+			for(int j = 0; j < Integer.BYTES; j++) {
+				data[offset] = (byte) ((entities[i] >> (8*j)) & 0xFF);
 				offset++;
 			}
 		}
@@ -441,6 +469,14 @@ public class Tilemap {
 		return tileHeight;
 	}
 	
+	public int getNumEntities() {
+		return entities.length / 3;
+	}
+	
+	public int getEntityValue(int x, int y){
+		return entities[x + y * numTilesWide];
+	}
+	
 	public int getTileID(int x, int y) {
 		x %= numTilesWide;
 		if(x < 0) x += numTilesWide;
@@ -483,6 +519,17 @@ public class Tilemap {
 				int color = tiles[x + ya];
 				if(color != -1)
 				renderer.renderImage2D(x * tileWidth, y * tileHeight, tileWidth, tileHeight, tileSprites.getSprite(color));
+				
+			}
+		}
+		if(entitySprites != null){
+			for (int y = 0; y < numTilesHigh; y++) {
+				int ya = y * numTilesWide;
+				for (int x = 0; x < numTilesWide; x++) {
+					int color = entities[x + ya];
+					if(color != -1)
+					renderer.renderImage2D(x * tileWidth, y * tileHeight, tileWidth, tileHeight, entitySprites.getSprite(color));		
+				}
 			}
 		}
 		

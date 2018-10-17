@@ -23,9 +23,10 @@ public class EditorState extends GameState {
 		mapEditor = new TilemapEditor(400, 400, 16, 16, PlatformGame.tileSheet);
 		if(PlatformGame.tileSheetSolidMap != null)
 			mapEditor.addSolidMap(PlatformGame.tileSheetSolidMap);
-		entityEditor = new TilemapEditor(400, 400, 16, 16, PlatformGame.enitities);
-		entityEditor.hideTools = !editEntities;
-		entityEditor.toggleGrid();
+		mapEditor.setEntitiesSprite(PlatformGame.enitities);
+//		entityEditor = new TilemapEditor(400, 400, 16, 16, PlatformGame.enitities);
+//		entityEditor.hideTools = !editEntities;
+//		entityEditor.toggleGrid();
 	}
 
 	@Override
@@ -34,15 +35,15 @@ public class EditorState extends GameState {
 			switchState(PlatformGame.MENU_STATE);
 			return;
 		}
-		if(Mouse.getMouse().isButtonClicked(MouseButton.RIGHT)) {
-			entityEditor.hideTools = editEntities;
-			editEntities = !editEntities;
-			mapEditor.hideTools = editEntities;
-			System.out.println("Switch");
-		}
+//		if(Mouse.getMouse().isButtonClicked(MouseButton.RIGHT)) {
+//			entityEditor.hideTools = editEntities;
+//			editEntities = !editEntities;
+//			mapEditor.hideTools = editEntities;
+//			System.out.println("Switch");
+//		}
 		
 		if(editEntities) {
-			entityEditor.update();
+//			entityEditor.update();
 		}else {
 			mapEditor.update();
 		}
@@ -51,7 +52,7 @@ public class EditorState extends GameState {
 	@Override
 	public void draw(Renderer2D renderer) {
 		mapEditor.draw(renderer);
-		entityEditor.draw(renderer);
+//		entityEditor.draw(renderer);
 	}
 
 }

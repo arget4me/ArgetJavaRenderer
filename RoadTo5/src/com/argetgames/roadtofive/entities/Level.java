@@ -20,18 +20,18 @@ public class Level {
 	private boolean victory = false, defeat = false;
 	
 	
-	public Level(Tilemap map, Tilemap entities) {
+	public Level(Tilemap map) {
 		this.map = map;
 		projectiles = new ArrayList<Projectile>();
 		livings = new ArrayList<Living>();
 		
-		int w = entities.getWidth();
-		int h = entities.getHeight();
-		int tw = entities.getTileWidth();
-		int th = entities.getTileHeight();
+		int w = map.getWidth();
+		int h = map.getHeight();
+		int tw = map.getTileWidth();
+		int th = map.getTileHeight();
 		for(int y = 0; y < h; y++) {
 			for(int x = 0; x < w; x++) {
-				int ID = entities.getTileID(x, y);
+				int ID = map.getEntityValue(x, y);
 				spawn(ID, x, y, tw, th);
 			}
 		}
