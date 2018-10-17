@@ -200,7 +200,7 @@ public class TilemapEditor extends Tilemap {
 			fc.setFileFilter(filter);
 			fc.showSaveDialog(null);
 			File saveFile = fc.getSelectedFile();
-			if(!saveFile.getName().endsWith("." + FILE_TYPE))
+			if(saveFile != null && !saveFile.getName().endsWith("." + FILE_TYPE))
 				saveFile = new File(saveFile.getPath() + "." + FILE_TYPE);
 			write(saveFile);
 		}
