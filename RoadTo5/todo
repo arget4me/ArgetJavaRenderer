@@ -4,6 +4,7 @@
 
 Bugs:
 * Sound spams when jumping is interrupted early. Jumping in a small space or under a solid platform.
+* Game sometimes crashes when shooting characters, negative index in char array.
 
 To be implemented:
 * Cutscenes.
@@ -12,6 +13,9 @@ To be implemented:
 * Options menu. control master sound.
 * Powerups / pickups.
 * Campaign menu.
+* More decorative tiles: wall, windows.
 
 Ideas:
 * Puzzles, pickups/powers that interact with surrounding.
+* Boss entities that doesn't trigger level victory.
+* Tile/Entities that trigger defeat: "Lava"-"Hurt Tile", "Death Tile",
