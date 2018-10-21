@@ -36,6 +36,9 @@ Renderer2D:
 Image2D:
 : able to load images that are builded with program without needing "res" folder next to jar.
 
+TextRenderer:
+* Different spacing for wide and thin characters. Maybe calculate directly from sprite.
+
 Rectangle:
 : Collision bug. checked bottom left corner of "other"-rectangle wrongly. accidentally checked (other.y + other.width -1) instead of (other.y + other.height -1)
 
