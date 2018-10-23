@@ -29,8 +29,12 @@ public class GameStateManager {
 	}
 	
 	public void setState(int index){
+		if(currentState != -1)gameStates[currentState].switched(false);
 		if(index < 0 || index >= gameStates.length)currentState = -1;
-		else currentState = index;
+		else {
+			currentState = index;
+			gameStates[currentState].switched(true);
+		}
 	}
 	
 	public void update(){

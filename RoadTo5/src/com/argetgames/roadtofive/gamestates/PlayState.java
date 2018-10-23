@@ -29,14 +29,24 @@ public class PlayState extends GameState {
 	public PlayState(GameStateManager gsm) {
 		super(gsm);
 		this.tileSheet = PlatformGame.tileSheet;
+		loadMaps();
+	}
+	
+	private void loadMaps(){
 		try {
 			Scanner input = new Scanner(new File("res/maps/storyOrder"));
 			int count = 0;
-		    while (input.hasNext()) {
-		      String word = input.next();
-		      System.out.println(word + " " + count);
-		      levelNames.add(word);
-		      count = count + 1;
+			levelNames.clear();
+			while (input.hasNext()) {
+		    	String name = input.next();
+				if(name.endsWith(Tilemap.FILE_TYPE)){
+					String name_check = name.substring(0, name.length() - ".".length() -Tilemap.FILE_TYPE.length());
+					if(name_check.length() > 0){
+						levelNames.add(name);
+						if(PlatformGame.debug_log)System.out.println(name + " " + count);
+						count = count + 1;
+					}
+				}
 		    }
 			input.close();
 			int n = levelNames.size();
@@ -45,13 +55,18 @@ public class PlayState extends GameState {
 				maps[i] = new Tilemap("res/maps/" + levelNames.get(i), 16, 16, this.tileSheet);
 			}
 			
+			currentMap = 0;
 			map_00 = maps[0];
 			level_00 = new Level(map_00);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			System.exit(1);
 		}
-		
+	}
+	
+	protected void switched(boolean active){
+		if(active){
+			loadMaps();
+		}
 	}
 	
 	private void restart(){

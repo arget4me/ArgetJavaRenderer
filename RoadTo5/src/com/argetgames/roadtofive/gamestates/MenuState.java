@@ -15,9 +15,10 @@ public class MenuState extends GameState {
 	private String[] list = {
 			"Play",
 			"Editor",
+			"Campaign Editor",
 			"Quit"
 	};
-	private final int PLAY = 0, EDITOR = 1, QUIT = 2;
+	private final int PLAY = 0, EDITOR = 1, CAMPAIGN_EDITOR = 2, QUIT = 3;
 	private int currentSelection = 0;
 	private int switchRepeatDelay = 0;
 	private final int delayTime = (int)(PlatformGame.global_ups * 0.2);
@@ -40,9 +41,11 @@ public class MenuState extends GameState {
 		if(switchRepeatDelay > 0)switchRepeatDelay--;
 		if(Keyboard.getKey(KeyEvent.VK_ENTER)){
 			if(currentSelection == PLAY){
-				gsm.setState(PlatformGame.PLAY_STATE);
+				switchState(PlatformGame.PLAY_STATE);
 			}else if(currentSelection == EDITOR){
-				gsm.setState(PlatformGame.EDITOR_STATE);
+				switchState(PlatformGame.EDITOR_STATE);
+			}else if(currentSelection == CAMPAIGN_EDITOR){
+				switchState(PlatformGame.CAMPAIGN_EDITOR_STATE);
 			}else if(currentSelection == QUIT){
 				System.exit(0);
 			}

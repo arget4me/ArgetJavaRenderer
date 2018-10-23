@@ -7,7 +7,7 @@ import com.argetgames.arget2d.graphics.SpriteSheet;
 import com.argetgames.arget2d.graphics.TextRenderer;
 import com.argetgames.arget2d.input.Mouse;
 import com.argetgames.arget2d.input.Mouse.MouseButton;
-import com.argetgames.arget2d.tilemap.TilemapEditor;
+import com.argetgames.roadtofive.gamestates.CampaignEditorState;
 import com.argetgames.roadtofive.gamestates.EditorState;
 import com.argetgames.roadtofive.gamestates.MenuState;
 import com.argetgames.roadtofive.gamestates.PlayState;
@@ -27,6 +27,7 @@ public class PlatformGame extends Gameloop {
 	public final static int MENU_STATE = 0;
 	public final static int PLAY_STATE = 1;
 	public final static int EDITOR_STATE = 2;
+	public final static int CAMPAIGN_EDITOR_STATE = 3;
 	
 	public PlatformGame(int width, int height, int scale) {
 		super(width, height, scale, true);
@@ -54,10 +55,11 @@ public class PlatformGame extends Gameloop {
 		SoundAPI.loadSound("shoot_1.wav");
 		SoundAPI.loadSound("testSound.wav");
 		
-		gsm = new GameStateManager(3);
+		gsm = new GameStateManager(4);
 		gsm.addAndSetState(new MenuState(gsm), MENU_STATE);
 		gsm.addState(new PlayState(gsm), PLAY_STATE);
 		gsm.addState(new EditorState(gsm), EDITOR_STATE);
+		gsm.addState(new CampaignEditorState(gsm), CAMPAIGN_EDITOR_STATE);
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public class PlatformGame extends Gameloop {
 	public void draw() {
 		renderer.useColorMask(true);
 		renderer.useCamera(false);
-		renderer.fillRect(0, 0, globalWidth, globalHeight, 0xFF888888);
+		renderer.fillRect(0, 0, globalWidth, globalHeight, 0xFF8888BB);
 		gsm.draw(renderer);
 	}
 

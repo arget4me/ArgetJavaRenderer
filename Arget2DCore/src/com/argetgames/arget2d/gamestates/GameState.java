@@ -10,6 +10,10 @@ public abstract class GameState {
 		this.gsm = gsm;
 	}
 	
+	protected void switched(boolean active){
+		
+	}
+	
 	protected void switchState(int index){
 		gsm.setState(index);
 	}
