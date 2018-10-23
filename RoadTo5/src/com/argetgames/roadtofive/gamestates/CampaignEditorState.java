@@ -94,7 +94,7 @@ public class CampaignEditorState extends GameState {
 //		}else {
 		for(File f : directory.listFiles() ) {
 			if(!f.isFile())return;
-			String name = directory.getName();
+			String name = f.getName();
 			if(name.endsWith(Tilemap.FILE_TYPE)){
 				name = name.substring(0, name.length() - ".".length() -Tilemap.FILE_TYPE.length());
 				if(name.length() > 0 && !campaign.contains(name)  && !list.contains(name)){
