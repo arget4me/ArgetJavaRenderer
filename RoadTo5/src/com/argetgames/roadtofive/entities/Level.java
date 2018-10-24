@@ -78,6 +78,9 @@ public class Level {
 				boss = new Boss(x * tw, y*th, tw*2, th*2, this);
 			}
 			break;
+		case 12:
+			l = new Pickup(x * tw, y*th, 10, 10, this);
+			break;
 		default:
 			break;
 		}
@@ -86,11 +89,25 @@ public class Level {
 		}
 	}
 	
+	public ArrayList<Pickup> checkCollisionPickups(Entity entity, int parentID, int dx, int dy) {
+		ArrayList<Pickup> collisions = new ArrayList<Pickup>();
+		for(int i = 0; i < livings.size(); i++) {
+			Living l = livings.get(i);
+			if(l instanceof Pickup){
+				if(!l.dead && l.getTeamID() != parentID && l.collision(entity)) {
+					collisions.add((Pickup) l);
+				}
+			}
+		}
+		
+		return collisions;
+	}
+	
 	public ArrayList<Living> checkCollisionDynamic(Entity entity, int parentID, int dx, int dy) {
 		ArrayList<Living> collisions = new ArrayList<Living>();
 		for(int i = 0; i < livings.size(); i++) {
 			Living l = livings.get(i);
-			if(!l.dead && l.getTeamID() != parentID && l.collision(entity)) {
+			if(l.getDynamicSolid() && !l.dead && l.getTeamID() != parentID && l.collision(entity)) {
 				collisions.add(l);
 			}
 		}

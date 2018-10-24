@@ -14,6 +14,8 @@ public abstract class Living extends Entity {
 	protected int health = maxHealth;
 	protected double moveSpeed = 1.0;
 	protected int teamID = -1;
+	
+	protected boolean dynamicSolid = true;
 
 	public Living(int x, int y, int width, int height, Level level) {
 		super(x, y, width, height, 16 * 4.0, 1.0 / 2.7, level);
@@ -34,6 +36,10 @@ public abstract class Living extends Entity {
 	
 	public int getTeamID() {
 		return teamID;
+	}
+	
+	public boolean getDynamicSolid(){
+		return dynamicSolid;
 	}
 	
 	protected void drawHealthBar(Renderer2D renderer) {

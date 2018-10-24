@@ -1,6 +1,7 @@
 package com.argetgames.roadtofive.entities;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import com.argetgames.arget2d.graphics.Animation2D;
 import com.argetgames.arget2d.graphics.Image2D;
@@ -131,6 +132,15 @@ public class Player extends Living {
 			left = (getXMove() < 0);
 		}
 		
+	}
+	
+	public boolean handleCollisionStatic(int dx, int dy) {
+		ArrayList<Pickup> pickups = level.checkCollisionPickups(this, this.teamID, dx, dy);
+		for(Pickup p : pickups){
+			p.applyBuff(this);
+		}
+		
+		return level.checkCollisionStatic(this, dx, dy);
 	}
 	
 	public void draw(Renderer2D renderer) {
