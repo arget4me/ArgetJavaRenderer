@@ -1,9 +1,13 @@
 package com.argetgames.arget2d.tilemap;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.argetgames.arget2d.game.Gameloop;
@@ -23,10 +27,10 @@ public class TilemapEditor extends Tilemap {
 	private int panelX;
 	private Image2DButton[] buttons, buttons_entities;
 	private Image2DButton gridButton, drawRedSolidButton, drawBlueSolidButton, editSolids, toggleShowSolids, erasorButton;
-	private Image2DButton testButton, saveButton, loadButton, entitiesButton;
+	private Image2DButton testButton, saveButton, loadButton, entitiesButton, fillButton;
 	private static Image2D
 	gridImg, redRectImg, blueBlueImg, editRectImg, showHideImg, eraserImg,
-	playImg, saveImg, loadImg, toggleEntityImg;
+	playImg, saveImg, loadImg, toggleEntityImg, fillImg;
 	private int buttonsPerLine, padding, scrollerSize, buttonWidth, scrollMax, startY;
 	private int scrollMax_entities;
 	private Scroller scroller;
@@ -44,6 +48,7 @@ public class TilemapEditor extends Tilemap {
 	public boolean hideTools = false;
 	
 	private boolean paintEntities = false;
+	private boolean fill_active = false;
 	
 	//Test play
 	private boolean testPlaying = false;
@@ -68,6 +73,7 @@ public class TilemapEditor extends Tilemap {
 		saveImg = new Image2D("/images/save.png", true);
 		loadImg = new Image2D("/images/load.png", true);
 		toggleEntityImg = new Image2D("/images/toggleEntity.png", true);
+		fillImg = new Image2D("/images/fill.png", true);
 		testPlayer = new Rectangle(0, 0, tileWidth, tileHeight);
 		for(int i = 0; i < selectionCorners.length; i++){
 			selectionCorners[i] = new Rectangle(0, 0, 1, 1);
@@ -109,9 +115,11 @@ public class TilemapEditor extends Tilemap {
 		
 		//row 1
 		testButton = new Image2DButton(panelX + getButtonX(0), padding + (buttonWidth + padding), buttonWidth, buttonWidth, playImg);
-		saveButton = new Image2DButton(panelX + getButtonX(1), padding + (buttonWidth + padding), buttonWidth, buttonWidth, saveImg);
-		loadButton = new Image2DButton(panelX + getButtonX(2), padding + (buttonWidth + padding), buttonWidth, buttonWidth, loadImg);
-		entitiesButton = new Image2DButton(panelX + getButtonX(3), padding + (buttonWidth + padding), buttonWidth, buttonWidth, toggleEntityImg);
+		loadButton = new Image2DButton(panelX + getButtonX(1), padding + (buttonWidth + padding), buttonWidth, buttonWidth, loadImg);
+		entitiesButton = new Image2DButton(panelX + getButtonX(2), padding + (buttonWidth + padding), buttonWidth, buttonWidth, toggleEntityImg);
+		fillButton = new Image2DButton(panelX + getButtonX(3), padding + (buttonWidth + padding), buttonWidth, buttonWidth, fillImg);
+		saveButton = new Image2DButton(panelX + getButtonX(5), padding + (buttonWidth + padding), buttonWidth, buttonWidth, saveImg);
+		
 		
 		startY = (buttonWidth + padding * 2) * 4;
 		for (int i = 0; i < buttons.length; i++) {
@@ -194,6 +202,7 @@ public class TilemapEditor extends Tilemap {
 		saveButton.update(mx, my);
 		if(saveButton.getClicked()){
 			setCurrentTile(0);
+			//TODO: needs some work.
 			final JFileChooser fc = new JFileChooser(new File("res/maps/"));
 			fc.removeChoosableFileFilter(fc.getFileFilter());
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Arget Tilemap", FILE_TYPE);
@@ -202,11 +211,19 @@ public class TilemapEditor extends Tilemap {
 			File saveFile = fc.getSelectedFile();
 			if(saveFile != null && !saveFile.getName().endsWith("." + FILE_TYPE))
 				saveFile = new File(saveFile.getPath() + "." + FILE_TYPE);
-			write(saveFile);
+			boolean shouldSave = true;
+			if(saveFile.exists()){// To prevent accidentally overwriting files.
+				int selected = JOptionPane.showConfirmDialog(fc, "Are you sure you want to oerwrite file: " + saveFile.getName() +"?", "Overwrite?", JOptionPane.OK_CANCEL_OPTION);
+				if(selected != JOptionPane.OK_OPTION){
+					shouldSave = false;
+				}
+			}
+			if(shouldSave)write(saveFile);
 		}
 		
 		loadButton.update(mx, my);
 		if(loadButton.getClicked()){
+			//TODO: needs some work.
 			setCurrentTile(0);
 			final JFileChooser fc = new JFileChooser(new File("res/maps/"));
 			fc.removeChoosableFileFilter(fc.getFileFilter());
@@ -240,6 +257,11 @@ public class TilemapEditor extends Tilemap {
 			editingRectangle = null;
 			toggleShowSolids();
 		}
+		fillButton.update(mx, my);
+		if(fillButton.getClicked()){
+			fill_active = !fill_active;
+		}
+		
 		erasorButton.update(mx, my);
 		if(erasorButton.getClicked())
 			setCurrentTile(-1);
@@ -435,6 +457,63 @@ public class TilemapEditor extends Tilemap {
 			}
 		}
 	}
+	
+	
+	private void fillTiles(int startX, int startY, int replaceID, int steps){
+		if(!replaceTile(startX, startY, replaceID))return;
+		ArrayList<Point> Q = new ArrayList<Point>();
+		Q.add(new Point(startX, startY - 1));
+		
+		Q.add(new Point(startX + 1, startY));
+
+		Q.add(new Point(startX - 1, startY));
+		
+		Q.add(new Point(startX, startY + 1));
+		
+		steps--;
+		while(steps > 0 && !Q.isEmpty()){
+			Point p = Q.get(0);
+			Q.remove(0);
+			if(replaceTile(p.x, p.y, replaceID)){
+				steps--;
+				Point neighbour = new Point(p.x, p.y - 1);
+				if(!Q.contains(neighbour))Q.add(neighbour);
+				
+				neighbour = new Point(p.x + 1, p.y);
+				if(!Q.contains(neighbour))Q.add(neighbour);
+				
+				neighbour = new Point(p.x - 1, p.y);
+				if(!Q.contains(neighbour))Q.add(neighbour);
+								
+				neighbour = new Point(p.x, p.y + 1);
+				if(!Q.contains(neighbour))Q.add(neighbour);
+			}
+			
+		}
+	}
+	
+	private boolean replaceTile(int xT, int yT, int replaceID){
+		if(replaceID == currentTile)return false;
+		if((xT >= 0 && xT < numTilesWide) && (yT >= 0 && yT < numTilesHigh)){
+			if(tiles[xT + yT * numTilesWide] == replaceID){
+				tiles[xT + yT * numTilesWide] = currentTile;
+				autoSolidRectangle(xT, yT, currentTile);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean setTile(int xT, int yT){
+		if((xT >= 0 && xT < numTilesWide) && (yT >= 0 && yT < numTilesHigh)){
+			if(tiles[xT + yT * numTilesWide] != currentTile){
+				tiles[xT + yT * numTilesWide] = currentTile;
+				autoSolidRectangle(xT, yT, currentTile);
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private void paintTile(int mx, int my){
 		if (mx < panelX) {
@@ -451,13 +530,28 @@ public class TilemapEditor extends Tilemap {
 					if(paintEntities){
 						if(entities[index] != currentTile){
 							if(entitySprites != null){
-								entities[index] = currentTile;
+								if(Keyboard.getKey(KeyEvent.VK_CONTROL)){
+									//select entity
+									currentTile = entities[index];
+								}else{
+									//paint entity
+									entities[index] = currentTile;
+								}
 							}
 						}
 					}else{
 						if(tiles[index] != currentTile){
-							tiles[index] = currentTile;
-							autoSolidRectangle(xT, yT, currentTile);
+							if(Keyboard.getKey(KeyEvent.VK_CONTROL)){
+								//select tile
+								currentTile = tiles[index];
+							}else{
+								//paint tile
+								if(fill_active){
+									fillTiles(xT, yT, tiles[index], 1000);
+								}else{
+									setTile(xT, yT);
+								}
+							}
 						}
 					}
 				}
@@ -557,8 +651,22 @@ public class TilemapEditor extends Tilemap {
 			erasorButton.draw(renderer, 0xFF6666);
 			saveButton.draw(renderer, 0xFFFF0000);
 			loadButton.draw(renderer, 0xFF0000FF);
+			if(fill_active)
+				fillButton.draw(renderer, 0xFFFFFFFF);
+			else
+				fillButton.draw(renderer, 0xFFFFFF00);
 			if(entitySprites != null)
 				entitiesButton.draw(renderer, 0xFF00FF00);
+			
+			//Show Selected tile/entity
+			renderer.drawRect(panelX + (panelWidth - padding - scrollerSize)/2 - 8 - 1, 32 - 1, 16 + 2, 16 + 2, 0xFF444444);
+			if(!paintEntities){
+				//show selected tile
+				renderer.renderImage2D(panelX + (panelWidth - padding - scrollerSize)/2 - 8, 32, 16, 16, tileSprites.getSprite(currentTile));
+			}else if(entitySprites != null){
+				//show selected entity
+				renderer.renderImage2D(panelX + (panelWidth - padding - scrollerSize)/2 - 8, 32, 16, 16, entitySprites.getSprite(currentTile));
+			}
 		}
 		testButton.draw(renderer, 0xFF444444);
 	}

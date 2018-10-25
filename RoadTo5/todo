@@ -5,6 +5,7 @@
 Bugs:
 * Sound spams when jumping is interrupted early. Jumping in a small space or under a solid platform.
 * Game sometimes crashes when shooting characters, negative index in char array.
+* Game crashes if map doesn't have player and/or boss. Should load dummy map instead.
 
 To be implemented:
 * Cutscenes.
@@ -12,11 +13,11 @@ To be implemented:
 * More levels.
 * Options menu. control master sound.
 * Powerups / pickups. -> Add buff. Permanent or over time.
-* Campaign menu.
+* Campaign menu. - level order and cutscenes.
 * More decorative tiles: wall, windows.
-* Line of sight for entities/bosses/player. "Fog of war?"
 
 Ideas:
+* Line of sight for entities/bosses/player. "Fog of war?"
 * Puzzles, pickups/powers that interact with surrounding.
 * Boss entities that doesn't trigger level victory.
 * Tile/Entities that trigger defeat: "Lava"-"Hurt Tile", "Death Tile",
