@@ -444,13 +444,19 @@ public class TilemapEditor extends Tilemap {
 			int xT = xa / tileWidth;
 			int yT = ya / tileHeight;
 	
+			int index = 0;
 			if (xT >= 0 && xT < numTilesWide) {
 				if (yT >= 0 && yT < numTilesHigh) {
-					if(tiles[xT + yT * numTilesWide] != currentTile){
-						if(paintEntities && entitySprites != null){
-							entities[xT + yT * numTilesWide] = currentTile;
-						}else{
-							tiles[xT + yT * numTilesWide] = currentTile;
+					index = xT + yT * numTilesWide;
+					if(paintEntities){
+						if(entities[index] != currentTile){
+							if(entitySprites != null){
+								entities[index] = currentTile;
+							}
+						}
+					}else{
+						if(tiles[index] != currentTile){
+							tiles[index] = currentTile;
 							autoSolidRectangle(xT, yT, currentTile);
 						}
 					}

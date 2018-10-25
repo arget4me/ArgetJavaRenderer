@@ -20,7 +20,7 @@ LevelEditor:
 * Copy tile/entity under mouse from key binding/ middle mouse click.
 * Fill tool.
 * Paint multiple tiles option.
-* Bug: Eraser doesn't work on entities.
+: FIXED! Bug: Eraser doesn't work on entities. //didn't work for entities because it checked the tiles array and not the entities array.
 * Idea: Define extra data for entities. (is boss, text, hostile etc.)
 //* Combine rectangles that are side by side.
 
