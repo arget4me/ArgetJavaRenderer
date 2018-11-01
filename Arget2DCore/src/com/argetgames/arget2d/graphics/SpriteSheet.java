@@ -19,6 +19,17 @@ public class SpriteSheet {
 		grabSprites();
 	}
 	
+	public SpriteSheet(String path, int spriteWidth, int spriteHeight, boolean useRecourceLoading) {
+		this.SPRITE_WIDTH = spriteWidth;
+		this.SPRITE_HEIGHT = spriteHeight;
+		sheet = new Image2D(path, useRecourceLoading);
+		this.WIDTH = sheet.width;
+		this.HEIGHT = sheet.height;
+		SPRITES_WIDE = WIDTH / SPRITE_WIDTH;
+		SPRITES_HIGH = HEIGHT / SPRITE_HEIGHT;
+		grabSprites();
+	}
+	
 	private void grabSprites() {
 		sprites = new Image2D[SPRITES_WIDE * SPRITES_HIGH];
 		for(int y = 0; y < SPRITES_HIGH; y++) {
