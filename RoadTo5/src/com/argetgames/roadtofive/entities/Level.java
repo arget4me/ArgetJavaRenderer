@@ -128,12 +128,17 @@ public class Level {
 		return map.checkCollisionBlueOnly(entity, dx, dy);
 	}
 	
+	//TODO: remove this
 	public void spawnProjectile(int x, int y, double speed, double angle, int DMG, int parentID) {
 		projectiles.add(new Projectile(x, y, speed, angle, DMG, this, parentID));
 	}
-	
+	//TODO: remove this
 	public void spawnProjectile(int x, int y, double speed, double angle, int DMG, double lifetimeSeconds, int parentID) {
 		projectiles.add(new Projectile(x, y, speed, angle, DMG, lifetimeSeconds, this, parentID));
+	}
+	
+	public void spawnProjectile(Projectile p) {
+		projectiles.add(p);
 	}
 	
 	public void update() {
@@ -162,6 +167,8 @@ public class Level {
 					i--;
 				}
 			}
+		}else {
+			if(!projectiles.isEmpty())projectiles.clear();
 		}
 	}
 	

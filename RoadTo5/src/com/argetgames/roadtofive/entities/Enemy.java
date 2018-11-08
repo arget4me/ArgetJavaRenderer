@@ -35,7 +35,8 @@ public class Enemy extends Living{
 		
 		if(shootDelay <= 0) {
 			double angle = Math.atan2(my, mx);
-			level.spawnProjectile(getCenterX(), getCenterY(), 6, angle, 6, 0.4, teamID);
+			
+			level.spawnProjectile(new BlobbyProjectile(getCenterX(), getCenterY(), angle, 0.4, level, teamID));
 			shootDelay = (int)(PlatformGame.global_ups / shootsPerSecond);
 			
 		}else {
