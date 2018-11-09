@@ -13,9 +13,9 @@ public class Projectile extends Entity {
 	protected double speed = 5;
 	protected double angle = 0;
 	public boolean dead = false;
-	private int lifetime = PlatformGame.global_ups * 1;
+	protected int lifetime = PlatformGame.global_ups * 1;
 	protected int parentID = -1;
-	private ArrayList<Living> collisions = null;
+	protected ArrayList<Living> collisions = null;
 	protected int DMG = 1;
 	protected Animation2D shoot, explode;
 	protected boolean exploding = false;

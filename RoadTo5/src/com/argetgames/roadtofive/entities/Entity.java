@@ -10,7 +10,7 @@ public abstract class Entity extends Rectangle {
 	private static int nextID = 0;
 	private int ID = -1;
 	
-	private double xPos, yPos;
+	protected double xPos, yPos;
 	private double xMove = 0, yMove = 0;
 
 	protected boolean jumping = false;
@@ -34,7 +34,10 @@ public abstract class Entity extends Rectangle {
 		calculateJump(jumpHeight, secondsToJumpPeak);
 	}
 	
-	private void calculateJump(double jumpHeight, double secondsToPeak){
+	/*
+	 * TODO: BUG: a higher jump give higher fall speed. If no jump height then no fall speed.
+	 */
+	protected void calculateJump(double jumpHeight, double secondsToPeak){
 		this.jumpHeight = jumpHeight;
 		this.secondsToPeak = secondsToPeak;
 		vel0_y = 2 * jumpHeight / secondsToPeak;

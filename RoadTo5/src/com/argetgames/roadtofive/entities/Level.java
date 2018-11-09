@@ -3,11 +3,8 @@ package com.argetgames.roadtofive.entities;
 import java.util.ArrayList;
 
 import com.argetgames.arget2d.graphics.Renderer2D;
-import com.argetgames.arget2d.input.Mouse;
-import com.argetgames.arget2d.input.Mouse.MouseButton;
 import com.argetgames.arget2d.tilemap.Tilemap;
 import com.argetgames.roadtofive.PlatformGame;
-import com.argetgames.roadtofive.sound.SoundAPI;
 
 public class Level {
 	
@@ -78,6 +75,16 @@ public class Level {
 				boss = new Boss(x * tw, y*th, tw*2, th*2, this);
 			}
 			break;
+		case 4:
+			{
+				l = new Bomber(x * tw, y*th, tw, th, this, false);
+			}break;
+		case 5:
+		{
+			if(boss == null) {
+				boss = new BomberBoss(x * tw, y*th, tw*2, th*2, this);
+			}
+		}break;
 		case 12:
 			l = new Pickup(x * tw, y*th, 10, 10, this);
 			break;
@@ -86,6 +93,12 @@ public class Level {
 		}
 		if(l != null) {
 			livings.add(l);
+		}
+	}
+	
+	public void spawn(Living living) {
+		if(!livings.contains(living)) {
+			livings.add(living);
 		}
 	}
 	
