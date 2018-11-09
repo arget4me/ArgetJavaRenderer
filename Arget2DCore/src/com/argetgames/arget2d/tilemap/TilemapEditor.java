@@ -212,7 +212,7 @@ public class TilemapEditor extends Tilemap {
 			if(saveFile != null && !saveFile.getName().endsWith("." + FILE_TYPE))
 				saveFile = new File(saveFile.getPath() + "." + FILE_TYPE);
 			boolean shouldSave = true;
-			if(saveFile.exists()){// To prevent accidentally overwriting files.
+			if(saveFile != null && saveFile.exists()){// To prevent accidentally overwriting files.
 				int selected = JOptionPane.showConfirmDialog(fc, "Are you sure you want to oerwrite file: " + saveFile.getName() +"?", "Overwrite?", JOptionPane.OK_CANCEL_OPTION);
 				if(selected != JOptionPane.OK_OPTION){
 					shouldSave = false;
