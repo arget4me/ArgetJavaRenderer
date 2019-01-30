@@ -659,13 +659,13 @@ public class TilemapEditor extends Tilemap {
 				entitiesButton.draw(renderer, 0xFF00FF00);
 			
 			//Show Selected tile/entity
-			renderer.drawRect(panelX + (panelWidth - padding - scrollerSize)/2 - 8 - 1, 32 - 1, 16 + 2, 16 + 2, 0xFF444444);
+			renderer.drawRect(panelX + (panelWidth - padding - scrollerSize)/2 - 8 - 1, padding + (buttonWidth + padding) * 2 - 1, buttonWidth + 2, buttonWidth + 2, 0xFF444444);
 			if(!paintEntities){
 				//show selected tile
-				renderer.renderImage2D(panelX + (panelWidth - padding - scrollerSize)/2 - 8, 32, 16, 16, tileSprites.getSprite(currentTile));
+				renderer.renderImage2D(panelX + (panelWidth - padding - scrollerSize)/2 - 8, padding + (buttonWidth + padding) * 2, buttonWidth, buttonWidth, tileSprites.getSprite(currentTile));
 			}else if(entitySprites != null){
 				//show selected entity
-				renderer.renderImage2D(panelX + (panelWidth - padding - scrollerSize)/2 - 8, 32, 16, 16, entitySprites.getSprite(currentTile));
+				renderer.renderImage2D(panelX + (panelWidth - padding - scrollerSize)/2 - 8, padding + (buttonWidth + padding) * 2, buttonWidth, buttonWidth, entitySprites.getSprite(currentTile));
 			}
 		}
 		testButton.draw(renderer, 0xFF444444);

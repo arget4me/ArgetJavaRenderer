@@ -115,6 +115,16 @@ public class Renderer2D {
 		applyCamera = value;
 	}
 	
+	
+	/**
+	 * Calculates new x, y, width, height to fill inside the renderer, it ignores parts outside the renderer. 
+	 * x and y: Padding, w and h: Offset, has the new coordinates for rendering.
+	 * @param startX
+	 * @param startY
+	 * @param rectWidth
+	 * @param rectHeight
+	 * @return 
+	 */
 	private boolean calcOffset(int startX, int startY, int rectWidth, int rectHeight){
 		int xOff = 0;
 		int yOff = 0;

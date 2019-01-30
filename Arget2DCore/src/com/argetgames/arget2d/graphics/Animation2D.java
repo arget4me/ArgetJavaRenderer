@@ -75,5 +75,9 @@ public class Animation2D {
 	public boolean playedOnce() {
 		return playedOnce;
 	}
+	
+	public boolean isPlaying() {
+		return playing;
+	}
 
 }
