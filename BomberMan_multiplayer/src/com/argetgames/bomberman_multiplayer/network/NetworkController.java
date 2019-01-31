@@ -40,7 +40,7 @@ public class NetworkController {
 		int shift = 0;
 		for(int i = 0; i < values.length; i++){
 			values[i] = ((data[index] >>> shift++) & 1) == 1;
-			if(shift >= 7) {
+			if(shift > 7) {
 				shift = 0;
 				index++;
 			}
@@ -53,11 +53,12 @@ public class NetworkController {
 		int shift = 0;
 		for(int i = 0; i < values.length; i++){
 			if(values[i]){
-				data[index] |= (1 << shift++);
-				if(shift >= 7) {
-					shift = 0;
-					index++;
-				}
+				data[index] |= (1 << shift);	
+			}
+			shift++;
+			if(shift > 7) {
+				shift = 0;
+				index++;
 			}
 		}
 		if(shift != 0)index++;//take up entire byte if any part of it is used.
