@@ -36,71 +36,7 @@ public class NetworkController {
 		return false;
 	}
 	
-	private int deserializeBoolean(byte[] data, int index, boolean[] values){
-		int shift = 0;
-		for(int i = 0; i < values.length; i++){
-			values[i] = ((data[index] >>> shift++) & 1) == 1;
-			if(shift > 7) {
-				shift = 0;
-				index++;
-			}
-		}
-		if(shift != 0)index++;//take up entire byte if any part of it is used.
-		return index;
-	}
 	
-	private int serializeBoolean(byte[] data, int index, boolean[] values){
-		int shift = 0;
-		for(int i = 0; i < values.length; i++){
-			if(values[i]){
-				data[index] |= (1 << shift);	
-			}
-			shift++;
-			if(shift > 7) {
-				shift = 0;
-				index++;
-			}
-		}
-		if(shift != 0)index++;//take up entire byte if any part of it is used.
-		return index;
-	}
-	
-	
-	private int deserializeShort(byte[] data, int index, short[] values){
-		for(int i = 0; i < values.length; i++){
-			for(int shift = 0; shift < Short.BYTES; shift++){
-				values[i] |= (data[index++] << (shift * 8));
-			}
-		}
-		return index;
-	}
-	
-	private int serializeShort(byte[] data, int index, short[] values){
-		for(int i = 0; i < values.length; i++){
-			for(int shift = 0; shift < Short.BYTES; shift++){
-				data[index++] = (byte)((values[i] >>> (shift * 8)) & 0xff);
-			}
-		}
-		return index;
-	}
-	
-	private int deserializeInteger(byte[] data, int index, int[] values){
-		for(int i = 0; i < values.length; i++){
-			for(int shift = 0; shift < Integer.BYTES; shift++){
-				values[i] |= (data[index++] << (shift * 8));
-			}
-		}
-		return index;
-	}
-	
-	private int serializeInteger(byte[] data, int index, int[] values){
-		for(int i = 0; i < values.length; i++){
-			for(int shift = 0; shift < Integer.BYTES; shift++){
-				data[index++] = (byte)((values[i] >>> (shift * 8)) & 0xff);
-			}
-		}
-		return index;
-	}
 	
 	//the server parses data input.
 	public void parseInput(byte[] data){
@@ -112,7 +48,7 @@ public class NetworkController {
 			int numBooleans = 0;
 			{
 				int[] values = new int[2];//{numBytes, keysUsed};
-				index = deserializeInteger(data, index, values);
+				index = Serialize.deserializeInteger(data, index, values);
 				if(values[0] > 0 &&	
 						data.length < index + values[0])return;
 				numBooleans = values[1];
@@ -120,7 +56,7 @@ public class NetworkController {
 
 			{
 				boolean[] values = new boolean[numBooleans];
-				index = deserializeBoolean(data, index, values);
+				index = Serialize.deserializeBoolean(data, index, values);
 				int i = 0;
 				for(Map.Entry<Integer, Boolean> c : controlls.entrySet()){
 					if(i >= numBooleans)break;
@@ -143,7 +79,7 @@ public class NetworkController {
 		
 		{
 			int[] values = {numBytes, keysUsed};
-			index = serializeInteger(data, index, values);
+			index = Serialize.serializeInteger(data, index, values);
 		}
 		{
 			boolean[] values = new boolean[keysUsed];
@@ -152,7 +88,7 @@ public class NetworkController {
 				if(i >= keysUsed)break;
 				values[i++] = c.getValue();
 			}
-			index = serializeBoolean(data, index, values);
+			index = Serialize.serializeBoolean(data, index, values);
 		}
 		
 		return data;
