@@ -42,8 +42,8 @@ public class BombermanGame extends Gameloop {
 		
 		
 		gsm = new GameStateManager(4);
-		gsm.addState(new PlayState(gsm), PLAY_STATE);
-		gsm.addAndSetState(new EditorState(gsm), EDITOR_STATE);
+		gsm.addAndSetState(new PlayState(gsm), PLAY_STATE);
+		gsm.addState(new EditorState(gsm), EDITOR_STATE);
 	}
 
 	@Override

@@ -26,6 +26,7 @@ public class Player extends Rectangle {
 	public boolean hasSpawned = false;
 	public boolean isDead = false;
 	private boolean hurt = false;
+	protected boolean UP, LEFT, DOWN, RIGHT, ATTACK;
 	
 	
 	public Player(int xTile, int yTile, int size) {
@@ -92,28 +93,37 @@ public class Player extends Rectangle {
 		animations[activeAnimation].play(false);
 	}
 	
-	protected void checkInput(Map map) {
+	protected void checkInput(){
+		UP = Keyboard.getKey(KeyEvent.VK_W);
+		DOWN = Keyboard.getKey(KeyEvent.VK_S);
+		LEFT = Keyboard.getKey(KeyEvent.VK_A);
+		RIGHT = Keyboard.getKey(KeyEvent.VK_D);
+		ATTACK = Keyboard.getKey(KeyEvent.VK_E);
+	}
+	
+	protected void handleInput(Map map) {
+		checkInput();
 		boolean startAnimation = false;
 		
 		int animationID = 0;
 		
-		if(Keyboard.getKey(KeyEvent.VK_W)) {
+		if(UP) {
 			animationID = 0;
 			DIR = 0;
 			startAnimation = true;
-		}else if(Keyboard.getKey(KeyEvent.VK_S)) {
+		}else if(DOWN) {
 			animationID = 2;
 			DIR = 2;
 			startAnimation = true;
-		}else if(Keyboard.getKey(KeyEvent.VK_A)) {
+		}else if(LEFT) {
 			animationID = 1;
 			DIR = 1;
 			startAnimation = true;
-		}else if(Keyboard.getKey(KeyEvent.VK_D)) {
+		}else if(RIGHT) {
 			animationID = 3;
 			DIR = 3;
 			startAnimation = true;
-		}else if(Keyboard.getKey(KeyEvent.VK_E)) {
+		}else if(ATTACK) {
 			if(!hasSpawned) {
 				int xa = 0; 
 				int ya = 0;
@@ -231,7 +241,7 @@ public class Player extends Rectangle {
 		}
 		
 		if(!walking)
-			checkInput(map);
+			handleInput(map);
 		
 		if(startWalking) {
 			startWalking(map);

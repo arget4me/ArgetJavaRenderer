@@ -1,5 +1,6 @@
 package com.argetgames.bomberman_multiplayer.entities;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 import com.argetgames.arget2d.graphics.Renderer2D;
@@ -10,29 +11,55 @@ import com.argetgames.bomberman_multiplayer.BombermanGame;
 public class Map {
 
 	private Tilemap level_0;
-	private ArrayList<Player> players =  new ArrayList<Player>();
-	private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
+	private ArrayList<Point> spawns;
+	private ArrayList<Player> players;
+	private ArrayList<Bomb> bombs;
 	
 	public Map() {
 		level_0 = new Tilemap("res/maps/level0.agtm", 32, 32, BombermanGame.tileSheet);
+		init();
+	}
+	
+	public void init(){
+		spawns = new ArrayList<Point>();
 		int w = level_0.getWidth();
 		int h = level_0.getHeight();
-		int tw = level_0.getTileWidth();
-		int th = level_0.getTileHeight();
+		//int tw = level_0.getTileWidth();
+		//int th = level_0.getTileHeight();
 		for(int y = 0; y < h; y++) {
 			for(int x = 0; x < w; x++) {
 				int ID = level_0.getEntityValue(x, y);
-				spawn(ID, x, y, tw, th);
+				spawn(ID, x, y);//, tw, th);
 			}
 		}
+		players = new ArrayList<Player>(spawns.size());
+		bombs = new ArrayList<Bomb>();
 	}
 	
-	private void spawn(int ID, int x, int y, int tw, int th) {
+	public Point getSpawnPoint(){
+		if(!spawns.isEmpty()){
+			Point spawn = spawns.get(0);
+			spawns.remove(0);
+			return spawn;
+		}
+		return null;
+	}
+	
+	public boolean addPlayer(Player player){
+		if(!players.contains(player)){
+			players.add(player);
+			return true;
+		}
+		return false;
+	}
+	
+	private void spawn(int ID, int x, int y){//, int tw, int th) {
 		switch(ID) {
 		case 0:
 		{
-			if(players.isEmpty())
-			players.add(new Player(x, y, tw));
+//			if(players.isEmpty())
+//			players.add(new Player(x, y, tw));
+			spawns.add(new Point(x, y));
 			
 		}break;
 		default:
@@ -117,10 +144,12 @@ public class Map {
 		renderer.camera.set(-(renderer.getWidth()/2 - level_0.getWidth()*level_0.getTileWidth()/2), 
 				-(renderer.getHeight()/2 - level_0.getHeight()*level_0.getTileHeight()/2));
 		level_0.draw(renderer);
+		
 		for(int i = 0; i < bombs.size(); i++) {
 			if(!bombs.get(i).isDead)
 				bombs.get(i).draw(renderer);
 		}
+		
 		for(int i = 0; i < players.size(); i++) {
 			if(!players.get(i).isDead)
 				players.get(i).draw(renderer);
