@@ -7,8 +7,11 @@ import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.menu.Rectangle;
 import com.argetgames.arget2d.tilemap.Tilemap;
 import com.argetgames.bomberman_multiplayer.BombermanGame;
+import com.argetgames.bomberman_multiplayer.network.Serialize;
 
 public class Map {
+	
+	private static final int MAP_HEADER = 0xFF1919FF;
 
 	private Tilemap level_0;
 	private ArrayList<Point> spawns;
@@ -21,6 +24,7 @@ public class Map {
 	}
 	
 	public void init(){
+		//@TODO: Change this to only load once.
 		spawns = new ArrayList<Point>();
 		int w = level_0.getWidth();
 		int h = level_0.getHeight();
@@ -130,6 +134,7 @@ public class Map {
 			}
 				
 		}
+		
 		for(int i = 0; i < bombs.size(); i++) {
 			bombs.get(i).update(this);
 			if(bombs.get(i).isDead) {
@@ -155,6 +160,101 @@ public class Map {
 				players.get(i).draw(renderer);
 		}
 		
+	}
+	
+	public void parseMapData(byte[] data){
+		if(data.length < Integer.BYTES * 3)return;
+		int index = 0;
+		{
+			int values[] = new int[1];
+			index = Serialize.deserializeInteger(data, index, values);
+			if(values[0] != MAP_HEADER)return;
+		}
+		int numIntegers = 0;
+		{
+			int values[] = new int[2];
+			index = Serialize.deserializeInteger(data, index, values);
+			if(values[0] > data.length)return;
+			numIntegers = values[1];
+		}
+		{
+			for(int i = 0; i < numIntegers; i++){
+				byte[] playerData = new byte[Player.NUM_PLAYER_BYTES];
+				for(int j = 0; j < playerData.length; j++){
+					playerData[j] = data[index++];
+				}
+				
+				if(i < players.size()){
+					players.get(i).parsePlayerData(playerData);
+				}else {
+					DummyPlayer p = new DummyPlayer(0, 0, level_0.getTileWidth());
+					p.parsePlayerData(playerData);
+					players.add(p);
+				}
+			}
+			while(numIntegers < players.size()){
+				players.remove(players.size() -1);
+			}
+		}
+		{
+			int values[] = new int[1];
+			index = Serialize.deserializeInteger(data, index, values);
+			numIntegers = values[0];
+		}
+		{
+			if(numIntegers % 2 != 0)return;
+			int values[] = new int[numIntegers];
+			index = Serialize.deserializeInteger(data, index, values);
+			for(int i = 0; i < numIntegers / 2; i++){
+				if(i < bombs.size()){
+					bombs.get(i).x = values[i*2];
+					bombs.get(i).y = values[i*2+1];
+				}else {
+					Player p;
+					if(players.isEmpty())
+						p = new Player(0, 0, 32);
+					else
+						p = players.get(0);
+					Bomb b = new Bomb(0, 0, level_0.getTileWidth(), p);
+					b.x = values[i*2];
+					b.y = values[i*2+1];
+					bombs.add(b);
+				}
+			}
+			while(numIntegers/2 < bombs.size()){
+				bombs.remove(bombs.size() -1);
+			}
+		}
+		
+	}
+	
+	public byte[] getMapData(){
+		int numBytes = Integer.BYTES * 2 + Integer.BYTES * 1 + Integer.BYTES * Player.NUM_PLAYER_BYTES * players.size() + Integer.BYTES * 1 + Integer.BYTES * 2 * bombs.size();
+		byte[] data = new byte[numBytes];
+		int index = 0;
+		{
+			int[] values = {MAP_HEADER, numBytes, players.size()};
+			index = Serialize.serializeInteger(data, index, values);
+		}
+		
+		for(int i = 0; i < players.size(); i++){
+			byte[] playerData = players.get(i).getPlayerData();
+			for(int j = 0; j < playerData.length; j++){
+				data[index++] = playerData[j];
+			}
+		}
+		
+		{	
+			int values[] = new int[1 + bombs.size()*2];
+			values[0] = bombs.size()*2;
+			for(int i = 0; i < bombs.size(); i++){
+				values[1 + i*2] = bombs.get(i).x;
+				values[1 + i*2 + 1] = bombs.get(i).y;
+			}
+			index = Serialize.serializeInteger(data, index, values);
+		}
+		
+		return data;
 	}
 
 	

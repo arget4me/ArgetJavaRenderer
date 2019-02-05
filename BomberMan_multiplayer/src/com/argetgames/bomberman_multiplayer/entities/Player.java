@@ -9,23 +9,24 @@ import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.menu.Rectangle;
 import com.argetgames.arget2d.tilemap.Tilemap;
 import com.argetgames.bomberman_multiplayer.BombermanGame;
+import com.argetgames.bomberman_multiplayer.network.Serialize;
 
 public class Player extends Rectangle {
 
 	public int size;
 	private double xPos, yPos;
-	private Animation2D[] animations = new Animation2D[8];
+	protected Animation2D[] animations = new Animation2D[8];
 
-	private int activeAnimation = 0;
-	private boolean animating = false;
-	private int DIR = 0;
-	private boolean startWalking = false;
-	private boolean walking = false;
-	private int stepsLeft = 0;
-	private int dx = 0, dy = 0;
+	protected int activeAnimation = 0;
+	protected boolean animating = false;
+	protected int DIR = 0;
+	protected boolean startWalking = false;
+	protected boolean walking = false;
+	protected int stepsLeft = 0;
+	protected int dx = 0, dy = 0;
 	public boolean hasSpawned = false;
 	public boolean isDead = false;
-	private boolean hurt = false;
+	protected boolean hurt = false;
 	protected boolean UP, LEFT, DOWN, RIGHT, ATTACK;
 	
 	
@@ -91,6 +92,10 @@ public class Player extends Rectangle {
 		hurt = true;
 		activeAnimation += 4;
 		animations[activeAnimation].play(false);
+	}
+	
+	protected void die(){
+		isDead = true;
 	}
 	
 	protected void checkInput(){
@@ -203,11 +208,11 @@ public class Player extends Rectangle {
 		}
 	}
 	
-	private boolean checkCollision(Map map) {
+	protected boolean checkCollision(Map map) {
 		return map.checkCollision(this, dx, dy);
 	}
 	
-	public void move(Map map) {
+	protected void move(Map map) {
 		if(stepsLeft > 0 && !checkCollision(map)) {
 			xPos += dx;
 			yPos += dy;
@@ -235,7 +240,7 @@ public class Player extends Rectangle {
 			if(animations[activeAnimation].playedOnce()) {
 				animating = false;
 				animations[activeAnimation].reset();
-				isDead = true;
+				die();
 			}
 			return;
 		}
@@ -269,6 +274,59 @@ public class Player extends Rectangle {
 		renderer.useCamera(false);
 	}
 	
+	public static final int PLAYER_HEADER = 0xFF2425FF;
 	
+	
+	public static final int NUM_PLAYER_BYTES = Integer.BYTES * 4 + 1;//Header + X + Y + ActiveAnimation + 4 Booleans(1byte)
+
+	public void parsePlayerData(byte[] data){
+		if(data.length < NUM_PLAYER_BYTES)return;
+		int index = 0;
+		{
+			int values[] = new int[1];
+			index = Serialize.deserializeInteger(data, index, values);
+			if(values[0] != PLAYER_HEADER)return;
+		}
+		{
+			int values[] = new int[3];
+			index = Serialize.deserializeInteger(data, index, values);
+			x = values[0];
+			y = values[1];
+			if(values[2] != activeAnimation){
+				animations[activeAnimation].reset();
+				activeAnimation = values[2];
+				animations[activeAnimation].play(true);
+			}
+		}
+		{
+			boolean values[] = new boolean[4];
+			index = Serialize.deserializeBoolean(data, index, values);
+			if(values[0] != animating){
+				if(values[0])
+					animations[activeAnimation].play(true);
+				else
+					animations[activeAnimation].stop();
+			}
+			animating = values[0];
+			hurt = values[1];
+			walking = values[2];
+			isDead = values[3];
+		}	
+		
+	}
+		
+	public byte[] getPlayerData(){
+		byte[] data = new byte[NUM_PLAYER_BYTES];
+		int index = 0;
+		{
+			int values[] = {PLAYER_HEADER, x, y, activeAnimation};
+			index = Serialize.serializeInteger(data, index, values);
+		}
+		{
+			boolean values[] = {animating, hurt, walking, isDead};
+			index = Serialize.serializeBoolean(data, index, values);
+		}
+		return data;
+	}
 	
 }

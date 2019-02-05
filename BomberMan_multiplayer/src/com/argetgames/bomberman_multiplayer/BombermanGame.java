@@ -3,8 +3,9 @@ package com.argetgames.bomberman_multiplayer;
 import com.argetgames.arget2d.game.Gameloop;
 import com.argetgames.arget2d.gamestates.GameStateManager;
 import com.argetgames.arget2d.graphics.SpriteSheet;
+import com.argetgames.bomberman_multiplayer.gamestates.ClientPlayState;
 import com.argetgames.bomberman_multiplayer.gamestates.EditorState;
-import com.argetgames.bomberman_multiplayer.gamestates.PlayState;
+import com.argetgames.bomberman_multiplayer.gamestates.ServerPlayState;
 
 @SuppressWarnings("serial")
 public class BombermanGame extends Gameloop {
@@ -42,8 +43,12 @@ public class BombermanGame extends Gameloop {
 		
 		
 		gsm = new GameStateManager(4);
-		gsm.addAndSetState(new PlayState(gsm), PLAY_STATE);
-		gsm.addState(new EditorState(gsm), EDITOR_STATE);
+		if(Main.startServer){
+			gsm.addAndSetState(new ServerPlayState(gsm), PLAY_STATE);
+			gsm.addState(new EditorState(gsm), EDITOR_STATE);
+		}else {
+			gsm.addAndSetState(new ClientPlayState(gsm), PLAY_STATE);
+		}
 	}
 
 	@Override

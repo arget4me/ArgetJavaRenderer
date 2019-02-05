@@ -7,21 +7,33 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import com.argetgames.arget2d.graphics.Renderer2D;
+import com.argetgames.bomberman_multiplayer.entities.NetworkPlayer;
+
 public class Server {
 
 	private static final int MAX_CLIENTS = 4;
-	private volatile int numConnectedClients;
+	public volatile int numConnectedClients;
 	private volatile boolean clientConnected[];
 	private volatile Address clientAddresses[];
+	
+	private volatile byte clientControllerData[][] = new byte[MAX_CLIENTS][];
+	public NetworkController controllers[] = new NetworkController[MAX_CLIENTS];
+	
 	private Thread listenThread;
 	private DatagramSocket server;
 	private int serverPort = 8192;
 	private volatile boolean serverActive = false;
 	private volatile ArrayList<DatagramPacket> sendQueue = new ArrayList<DatagramPacket>();
 	
+	
 	public final static int CONNECTION_REQUEST_PACKET = 0xFF1111FF;
 	public final static int CONNECTION_ACCEPTED_PACKET = 0xFF2222FF;
 	public final static int CONNECTION_DENIED_PACKET = 0xFF2222FF;
+	public final static int GAME_DATA_PACKET = 0xFF3333FF;
+	public final static int GAME_STATE_PACKET = 0xFF4444FF;
+
+
 	
 	
 	public Server() {
@@ -38,6 +50,10 @@ public class Server {
 		listenThread.start();
 	}
 	
+	public void start(){
+		
+	}
+	
 	public void listen() {
 		byte[] data = new byte[1024];
 		while(serverActive){
@@ -47,23 +63,30 @@ public class Server {
 				int index = 0;
 				int values[] = new int[1];
 				index = Serialize.deserializeInteger(data, index, values);
+				int clientIndex = findExistingClientIndex(new Address(packet.getAddress(), packet.getPort()));
 				if(values[0] == CONNECTION_REQUEST_PACKET){
-					int nextIndex = findExistingClientIndex(new Address(packet.getAddress(), packet.getPort()));
-					if(nextIndex == -1){
-						nextIndex = findFreeClientIndex();
+					if(clientIndex == -1){
+						System.out.println("Client connected: " + packet.getAddress() +":"+ packet.getPort());
+						clientIndex = findFreeClientIndex();
 						numConnectedClients++;
-						clientConnected[nextIndex] = true;
-						clientAddresses[nextIndex] = new Address(packet.getAddress(), packet.getPort());
+						clientConnected[clientIndex] = true;
+						clientAddresses[clientIndex] = new Address(packet.getAddress(), packet.getPort());
+						controllers[clientIndex] = new NetworkController();
 					}
-					if(nextIndex > -1){
+					if(clientIndex > -1){
 						byte[] sendData = new byte[1024];
 						int[] responseValue = {CONNECTION_ACCEPTED_PACKET};
 						Serialize.serializeInteger(sendData, 0, responseValue);
-						
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length);
+						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, clientAddresses[clientIndex].ip, clientAddresses[clientIndex].port);
 						sendQueue.add(sendPacket);
 					}
 					
+				}else if(values[0] == GAME_DATA_PACKET){
+					byte[] controllerData = new byte[data.length - index];
+					for(int i = 0; i < controllerData.length; i++){
+						controllerData[i] = data[index + i];
+					}
+					clientControllerData[clientIndex] = controllerData;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -73,23 +96,45 @@ public class Server {
 	}
 	
 	public void sendToClients(){
-		Thread send = new Thread(new Runnable(){
-			public void run (){
-				while(!sendQueue.isEmpty()){
-					try {
-						server.send(sendQueue.get(0));
-						sendQueue.remove(0);
-					} catch (IOException e) {
-						e.printStackTrace();
+		if(serverActive){
+			Thread send = new Thread(new Runnable(){
+				public void run (){
+					while(!sendQueue.isEmpty()){
+						try {
+							server.send(sendQueue.get(0));
+							sendQueue.remove(0);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
+			}, "Server Sending Thread");
+			send.start();
+		}
+	}
+	
+	public void addToSendQueue(byte[] gameData) {
+		if(gameData != null && gameData.length <= 1024 - Integer.BYTES){
+			byte[] sendData = new byte[1024];
+			int[] messageHeader = {GAME_STATE_PACKET};
+			int index = Serialize.serializeInteger(sendData, 0, messageHeader);
+			for(int i = 0; i < gameData.length; i++){
+				sendData[index + i] = gameData[i];
 			}
-		}, "Server Sending Thread");
-		send.start();
+			for(int i = 0; i < numConnectedClients; i++){				
+				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, clientAddresses[i].ip, clientAddresses[i].port);
+				sendQueue.add(sendPacket);
+			}
+		}
 	}
 	
 	public void update(){
 		sendToClients();
+		for(int i = 0; i < numConnectedClients; i++){
+			if(isClientConnected(i) && clientControllerData[i] != null){
+				controllers[i].parseInput(clientControllerData[i]);
+			}
+		}
 	}
 	
 	public final int findFreeClientIndex(){
@@ -115,6 +160,14 @@ public class Server {
 	{
 	    return clientConnected[clientIndex];
 	}
+
+	public void draw(Renderer2D renderer) {
+		for(int i = 0; i < numConnectedClients; i++){
+			renderer.fillRect(i*12, 0, 10, 10, 0xFF00FF00);
+		}
+	}
+
+	
 
 }
 

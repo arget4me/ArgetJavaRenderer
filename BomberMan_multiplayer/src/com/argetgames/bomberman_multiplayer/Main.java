@@ -13,6 +13,7 @@ public class Main {
 	private static GraphicsDevice device;
 	public static boolean useFullscreen = false;
 	private static final int WIDTH = 1280, HEIGHT = 720;//WIDTH / 16 * 9;
+	public static boolean startServer = false;
 	
 	public static void main(String[] args) {		
 		
@@ -37,14 +38,20 @@ public class Main {
 			frame.setIgnoreRepaint(true);
 		}
 		
+		int host = JOptionPane.showConfirmDialog(null, "Do you want to host game?", "Host?", JOptionPane.YES_NO_OPTION);
+		if(host == JOptionPane.YES_OPTION){
+			startServer = true;
+		}
+		
 		BombermanGame game = new BombermanGame(WIDTH, HEIGHT, 1, true);
 		frame.setTitle("Bomberman Multiplayer");
 		frame.add(game);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
 		
 		if(useFullscreen) {
 			device.setFullScreenWindow(frame);
+		}else {
+			frame.pack();
+			frame.setLocationRelativeTo(null);
 		}
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

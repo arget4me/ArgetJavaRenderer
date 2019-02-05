@@ -35,7 +35,7 @@ public class Serialize {
 	public static int deserializeShort(byte[] data, int index, short[] values){
 		for(int i = 0; i < values.length; i++){
 			for(int shift = 0; shift < Short.BYTES; shift++){
-				values[i] |= (data[index++] << (shift * 8));
+				values[i] |= ((data[index++] & 0xFF) << (shift * 8));
 			}
 		}
 		return index;
@@ -43,6 +43,7 @@ public class Serialize {
 	
 	public static int serializeShort(byte[] data, int index, short[] values){
 		for(int i = 0; i < values.length; i++){
+			values[i] = 0;
 			for(int shift = 0; shift < Short.BYTES; shift++){
 				data[index++] = (byte)((values[i] >>> (shift * 8)) & 0xff);
 			}
@@ -52,8 +53,9 @@ public class Serialize {
 	
 	public static int deserializeInteger(byte[] data, int index, int[] values){
 		for(int i = 0; i < values.length; i++){
+			values[i] = 0;
 			for(int shift = 0; shift < Integer.BYTES; shift++){
-				values[i] |= (data[index++] << (shift * 8));
+				values[i] |= ((data[index++] & 0xFF) << (shift * 8));
 			}
 		}
 		return index;
