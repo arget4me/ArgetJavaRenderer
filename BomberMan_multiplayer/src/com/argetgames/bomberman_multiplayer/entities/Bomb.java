@@ -7,6 +7,7 @@ import com.argetgames.arget2d.graphics.Image2D;
 import com.argetgames.arget2d.graphics.Renderer2D;
 import com.argetgames.arget2d.menu.Rectangle;
 import com.argetgames.bomberman_multiplayer.BombermanGame;
+import com.argetgames.bomberman_multiplayer.network.Serialize;
 
 public class Bomb extends Rectangle {
 
@@ -171,7 +172,7 @@ public class Bomb extends Rectangle {
 		y = (y / size + ya) * size;
 	}
 	
-	private void bombSlide(Map map) {
+	protected void bombSlide(Map map) {
 		int speed = 8;
 		switch(dir){
 	    case 0:
@@ -283,6 +284,47 @@ public class Bomb extends Rectangle {
 	        	e.draw(renderer);
 	        }
 		}
+	}
+	
+	
+	public static final int BOMB_HEADER = 0xFF2744FF;
+	public static final int NUM_BOMB_BYTES = Integer.BYTES * 3 + 1;//Header + X + Y + 1 Booleans(1byte)
+	
+	public void parsePlayerData(byte[] data){
+		if(data.length < NUM_BOMB_BYTES)return;
+		int index = 0;
+		{
+			int values[] = new int[1];
+			index = Serialize.deserializeInteger(data, index, values);
+			if(values[0] != BOMB_HEADER)return;
+		}
+		
+		{
+			int values[] = new int[2];
+			index = Serialize.deserializeInteger(data, index, values);
+			x = values[0];
+			y = values[1];
+		}
+		{
+			boolean values[] = new boolean[2];
+			index = Serialize.deserializeBoolean(data, index, values);
+			sliding = values[0];
+			isDead = values[1];
+		}	
+	}
+		
+	public byte[] getBombData(){
+		byte[] data = new byte[NUM_BOMB_BYTES];
+		int index = 0;
+		{
+			int values[] = {BOMB_HEADER, x, y};
+			index = Serialize.serializeInteger(data, index, values);
+		}
+		{
+			boolean values[] = {sliding, isDead};
+			index = Serialize.serializeBoolean(data, index, values);
+		}
+		return data;
 	}
 
 	

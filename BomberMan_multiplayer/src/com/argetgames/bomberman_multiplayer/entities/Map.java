@@ -202,26 +202,27 @@ public class Map {
 			numIntegers = values[0];
 		}
 		{
-			if(numIntegers % 2 != 0)return;
-			int values[] = new int[numIntegers];
-			index = Serialize.deserializeInteger(data, index, values);
-			for(int i = 0; i < numIntegers / 2; i++){
+			
+			for(int i = 0; i < numIntegers; i++){
+				byte[] bombData = new byte[Bomb.NUM_BOMB_BYTES];
+				for(int j = 0; j < bombData.length; j++){
+					bombData[j] = data[index++];
+				}
+				
 				if(i < bombs.size()){
-					bombs.get(i).x = values[i*2];
-					bombs.get(i).y = values[i*2+1];
+					bombs.get(i).parsePlayerData(bombData);
 				}else {
 					Player p;
 					if(players.isEmpty())
 						p = new Player(0, 0, 32);
 					else
 						p = players.get(0);
-					Bomb b = new Bomb(0, 0, level_0.getTileWidth(), p);
-					b.x = values[i*2];
-					b.y = values[i*2+1];
+					DummyBomb b = new DummyBomb(0, 0, level_0.getTileWidth(), p);
+					p.parsePlayerData(bombData);
 					bombs.add(b);
 				}
 			}
-			while(numIntegers/2 < bombs.size()){
+			while(numIntegers < bombs.size()){
 				bombs.remove(bombs.size() -1);
 			}
 		}
@@ -229,7 +230,7 @@ public class Map {
 	}
 	
 	public byte[] getMapData(){
-		int numBytes = Integer.BYTES * 2 + Integer.BYTES * 1 + Integer.BYTES * Player.NUM_PLAYER_BYTES * players.size() + Integer.BYTES * 1 + Integer.BYTES * 2 * bombs.size();
+		int numBytes = Integer.BYTES * 2 + Integer.BYTES * 1 + Player.NUM_PLAYER_BYTES * players.size() + Integer.BYTES * 1 + Bomb.NUM_BOMB_BYTES * bombs.size();
 		byte[] data = new byte[numBytes];
 		int index = 0;
 		{
@@ -243,15 +244,16 @@ public class Map {
 				data[index++] = playerData[j];
 			}
 		}
-		
+
 		{	
-			int values[] = new int[1 + bombs.size()*2];
-			values[0] = bombs.size()*2;
-			for(int i = 0; i < bombs.size(); i++){
-				values[1 + i*2] = bombs.get(i).x;
-				values[1 + i*2 + 1] = bombs.get(i).y;
-			}
+			int[] values = {bombs.size()};
 			index = Serialize.serializeInteger(data, index, values);
+			for(int i = 0; i < bombs.size(); i++){
+				byte[] bombData = bombs.get(i).getBombData();
+				for(int j = 0; j < bombData.length; j++){
+					data[index++] = bombData[j];
+				}
+			}
 		}
 		
 		return data;
