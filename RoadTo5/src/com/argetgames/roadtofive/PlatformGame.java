@@ -65,8 +65,8 @@ public class PlatformGame extends Gameloop {
 
 	@Override
 	public void updateGame() {
-		if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE))
-			Main.mainFrame = toggleStretchFullscreen(Main.mainFrame);
+//		if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE))
+//			Main.mainFrame = toggleStretchFullscreen(Main.mainFrame);
 		gsm.update();
 	}
 

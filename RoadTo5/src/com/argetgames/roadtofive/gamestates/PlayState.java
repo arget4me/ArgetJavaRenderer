@@ -83,7 +83,7 @@ public class PlayState extends GameState {
 			return;
 		}
 		
-		if(Mouse.getMouse().isButtonClicked(MouseButton.RIGHT))
+		if(Mouse.getMouse().isButtonClicked(MouseButton.MIDDLE))
 			restart();
 	
 		level_00.update();

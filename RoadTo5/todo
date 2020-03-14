@@ -4,7 +4,7 @@
 
 Bugs:
 * Sound spams when jumping is interrupted early. Jumping in a small space or under a solid platform.
-* Game sometimes crashes when shooting characters, negative index in char array.
+* Game sometimes crashes when shooting characters[ABC..abc], negative index in char array.
 * Game crashes if map doesn't have player and/or boss. Should load dummy map instead.
 
 To be implemented:
