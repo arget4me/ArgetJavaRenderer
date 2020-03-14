@@ -13,10 +13,10 @@ public class Renderer2D {
 	//@NOTE: Offset dimension to only render what is inside renderer.
 	private int xOffset = 0, yOffset = 0, wOffset = 0, hOffset = 0, xPadding = 0, yPadding = 0;
 
-	public Renderer2D(int width, int height) {
+	public Renderer2D(int width, int height, int[] pixels) {
 		WIDTH = width;
 		HEIGHT = height;
-		pixels = new int[WIDTH * HEIGHT];
+		this.pixels = pixels;//new int[WIDTH * HEIGHT];
 		camera = new Camera2D(0, 0);
 	}
 	

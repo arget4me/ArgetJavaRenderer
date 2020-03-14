@@ -56,7 +56,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		displayImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixelBuffer = ((DataBufferInt) displayImage.getRaster().getDataBuffer()).getData();
-		renderer = new Renderer2D(WIDTH, HEIGHT);
+		renderer = new Renderer2D(WIDTH, HEIGHT, pixelBuffer);
 		camera = renderer.camera;
 		globalWidth = renderer.getWidth();
 		globalHeight = renderer.getHeight();
@@ -184,9 +184,7 @@ public abstract class Gameloop extends Canvas implements Runnable {
 		renderer.clear();
 		// render stuff here..
 		draw();
-		for (int i = 0; i < pixelBuffer.length; i++) {
-			pixelBuffer[i] = renderer.getPixel(i);
-		}
+		
 		//@NOTE: This is to support full screen
 		g.drawImage(displayImage, 0, 0, getWidth(), getHeight(), null); 
 //		g.drawImage(displayImage, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
@@ -196,98 +194,107 @@ public abstract class Gameloop extends Canvas implements Runnable {
 	}
 	
 	public JFrame toggleFullscreen(JFrame frame){
-		if(frame == null)
-			return null;
-		
-		Image icon = frame.getIconImage();
-		String title = frame.getTitle();
-		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
-		boolean resizable = frame.isResizable();
-		int closeOperations = frame.getDefaultCloseOperation();		
-		
-		/** Must delete old frame and create a new to toggle undecorated. */
-		frame.dispose();
-		frame = null;
-		frame =  new JFrame();
-		/**@Note: can't be visible before setting full screen **/
-		frame.setVisible(false);
-		frame.setTitle(title);
-		if(icon != null)frame.setIconImage(icon);
-		
-		if(!isFullscreen){
-			if(debug_log)
-				System.out.println("Fullscreen");
-			frame.setUndecorated(true);
-			frame.setVisible(true);
-			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			setPreferredSize(frame.getSize());
-		}else {
-			if(debug_log)
-				System.out.println("Quit Fullscreen");
-			frame.setUndecorated(false);
-			frame.setVisible(true);
-			setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
-		}
-		
-		frame.add(this);
-		frame.setDefaultCloseOperation(closeOperations);
-		frame.setResizable(resizable);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		displayImage = new BufferedImage(getWidth()/SCALE, getHeight()/SCALE, BufferedImage.TYPE_INT_RGB);
-		pixelBuffer = ((DataBufferInt) displayImage.getRaster().getDataBuffer()).getData();
-		renderer = new Renderer2D(getWidth()/SCALE, getHeight()/SCALE);
-		globalWidth = renderer.getWidth();
-		globalHeight = renderer.getHeight();
-		Mouse.setScale(SCALE, SCALE);
-		
-		requestFocus();
+		System.out.println("This function is removed");
 		return frame;
+		
+		//Bad way this won't work reliably
+		
+//		if(frame == null)
+//			return null;
+//		
+//		Image icon = frame.getIconImage();
+//		String title = frame.getTitle();
+//		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+//		boolean resizable = frame.isResizable();
+//		int closeOperations = frame.getDefaultCloseOperation();		
+//		
+//		/** Must delete old frame and create a new to toggle undecorated. */
+//		frame.dispose();
+//		frame = null;
+//		frame =  new JFrame();
+//		/**@Note: can't be visible before setting full screen **/
+//		frame.setVisible(false);
+//		frame.setTitle(title);
+//		if(icon != null)frame.setIconImage(icon);
+//		
+//		if(!isFullscreen){
+//			if(debug_log)
+//				System.out.println("Fullscreen");
+//			frame.setUndecorated(true);
+//			frame.setVisible(true);
+//			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//			setPreferredSize(frame.getSize());
+//		}else {
+//			if(debug_log)
+//				System.out.println("Quit Fullscreen");
+//			frame.setUndecorated(false);
+//			frame.setVisible(true);
+//			setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+//		}
+//		
+//		frame.add(this);
+//		frame.setDefaultCloseOperation(closeOperations);
+//		frame.setResizable(resizable);
+//		frame.pack();
+//		frame.setLocationRelativeTo(null);
+//		displayImage = new BufferedImage(getWidth()/SCALE, getHeight()/SCALE, BufferedImage.TYPE_INT_RGB);
+//		pixelBuffer = ((DataBufferInt) displayImage.getRaster().getDataBuffer()).getData();
+//		renderer = new Renderer2D(getWidth()/SCALE, getHeight()/SCALE);
+//		globalWidth = renderer.getWidth();
+//		globalHeight = renderer.getHeight();
+//		Mouse.setScale(SCALE, SCALE);
+//		
+//		requestFocus();
+//		return frame;
 	}
 	
 	public JFrame toggleStretchFullscreen(JFrame frame){
-		if(frame == null)
-			return null;
-		
-		Image icon = frame.getIconImage();
-		String title = frame.getTitle();
-		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
-		boolean resizable = frame.isResizable();
-		int closeOperations = frame.getDefaultCloseOperation();		
-		
-		/** Must delete old frame and create a new to toggle undecorated. */
-		frame.dispose();
-		frame = null;
-		frame =  new JFrame();
-		/**@Note: can't be visible before setting full screen **/
-		frame.setVisible(false);
-		frame.setTitle(title);
-		if(icon != null)frame.setIconImage(icon);
-		
-		if(!isFullscreen){
-			if(debug_log)
-				System.out.println("Fullscreen");
-			frame.setUndecorated(true);
-			frame.setVisible(true);
-			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			setPreferredSize(frame.getSize());
-		}else {
-			if(debug_log)
-				System.out.println("Quit Fullscreen");
-			frame.setUndecorated(false);
-			frame.setVisible(true);
-			setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
-		}
-		
-		frame.add(this);
-		frame.setDefaultCloseOperation(closeOperations);
-		frame.setResizable(resizable);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		Mouse.setScale(getWidth()/(double)WIDTH, getHeight()/(double)HEIGHT);
-		
-		requestFocus();
+		System.out.println("This function is removed");
 		return frame;
+		//Bad way this won't work reliably
+		
+//		if(frame == null)
+//			return null;
+//		
+//		Image icon = frame.getIconImage();
+//		String title = frame.getTitle();
+//		boolean isFullscreen = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+//		boolean resizable = frame.isResizable();
+//		int closeOperations = frame.getDefaultCloseOperation();		
+//		
+//		/** Must delete old frame and create a new to toggle undecorated. */
+//		frame.dispose();
+//		frame = null;
+//		frame =  new JFrame();
+//		/**@Note: can't be visible before setting full screen **/
+//		frame.setVisible(false);
+//		frame.setTitle(title);
+//		if(icon != null)frame.setIconImage(icon);
+//		
+//		if(!isFullscreen){
+//			if(debug_log)
+//				System.out.println("Fullscreen");
+//			frame.setUndecorated(true);
+//			frame.setVisible(true);
+//			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//			setPreferredSize(frame.getSize());
+//		}else {
+//			if(debug_log)
+//				System.out.println("Quit Fullscreen");
+//			frame.setUndecorated(false);
+//			frame.setVisible(true);
+//			setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+//		}
+//		
+//		frame.add(this);
+//		frame.setDefaultCloseOperation(closeOperations);
+//		frame.setResizable(resizable);
+//		frame.pack();
+//		frame.setLocationRelativeTo(null);
+//		Mouse.setScale(getWidth()/(double)WIDTH, getHeight()/(double)HEIGHT);
+//		
+//		requestFocus();
+//		return frame;
 	}
 	
 	/* Gameloop test that aren't used anymore */
