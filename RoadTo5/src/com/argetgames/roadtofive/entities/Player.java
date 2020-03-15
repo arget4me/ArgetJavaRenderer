@@ -113,8 +113,8 @@ public class Player extends Living {
 		
 		if(shootDelay <= 0) {
 			if(Mouse.getMouse().isButtonPress(MouseButton.LEFT)) {
-				int mx = Mouse.getMouseX() - PlatformGame.globalWidth/2;
-				int my = Mouse.getMouseY() - PlatformGame.globalHeight/2;
+				int mx = Mouse.getMouseX() - PlatformGame.camera.getOffsetX() - getCenterX();// - PlatformGame.globalWidth/2;
+				int my = Mouse.getMouseY() - PlatformGame.camera.getOffsetY() - getCenterY();// - PlatformGame.globalHeight/2;
 				double angle = Math.atan2(my, mx);
 				level.spawnProjectile(new PlayerProjectile(getCenterX(), getCenterY(), angle, 0.5, level, teamID));
 				shootDelay = PlatformGame.global_ups / shootsPerSecond;

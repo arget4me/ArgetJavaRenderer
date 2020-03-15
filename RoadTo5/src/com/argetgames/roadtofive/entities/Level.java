@@ -158,6 +158,9 @@ public class Level {
 		projectiles.add(p);
 	}
 	
+	
+	
+	
 	public void update() {
 		if(!victory && !defeat) {
 			for(int i = 0; i < livings.size(); i++) {
@@ -174,7 +177,8 @@ public class Level {
 			if(player.dead)
 				defeat = true;
 			
-			PlatformGame.camera.set(player.getCenterX() - PlatformGame.globalWidth/2, player.getCenterY() - PlatformGame.globalHeight/2);
+			PlatformGame.camera.follow(player.getCenterX() - PlatformGame.globalWidth/2, player.getCenterY() - PlatformGame.globalHeight/2, PlatformGame.globalHeight/8);
+			//PlatformGame.camera.set(player.getCenterX() - PlatformGame.globalWidth/2, player.getCenterY() - PlatformGame.globalHeight/2);
 			
 			for(int i = 0; i < projectiles.size(); i++) {
 				Projectile p = projectiles.get(i);
