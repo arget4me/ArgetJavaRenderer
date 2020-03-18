@@ -1,7 +1,10 @@
 package com.argetgames.roadtofive;
 
+import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -11,6 +14,7 @@ public class Main {
 	public static PlatformGame game;
 	public static JFrame mainFrame;
 	private static GraphicsDevice device;
+	public static Cursor crosshairCursor, normalCursor;
 	
 	public static void main(String []args){
 		game = new PlatformGame(16*30*1, 9*30*1, 2);
@@ -52,6 +56,12 @@ public class Main {
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setResizable(false);
 		mainFrame.setVisible(true);
+		
+		java.awt.Toolkit toolkit = java.awt.Toolkit.getDefaultToolkit();
+		Image image = toolkit.getImage("res/images/mousecursor.png");
+		crosshairCursor = toolkit.createCustomCursor(image, new Point(16,16), "");
+		normalCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+		mainFrame.setCursor(normalCursor);
 		
 		game.Start();
 	}

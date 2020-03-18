@@ -14,6 +14,7 @@ import com.argetgames.arget2d.input.Keyboard;
 import com.argetgames.arget2d.input.Mouse;
 import com.argetgames.arget2d.input.Mouse.MouseButton;
 import com.argetgames.arget2d.tilemap.Tilemap;
+import com.argetgames.roadtofive.Main;
 import com.argetgames.roadtofive.PlatformGame;
 import com.argetgames.roadtofive.entities.Level;
 
@@ -66,6 +67,10 @@ public class PlayState extends GameState {
 	protected void switched(boolean active){
 		if(active){
 			loadMaps();
+			Main.mainFrame.setCursor(Main.crosshairCursor);
+		}else
+		{
+			Main.mainFrame.setCursor(Main.normalCursor);
 		}
 	}
 	

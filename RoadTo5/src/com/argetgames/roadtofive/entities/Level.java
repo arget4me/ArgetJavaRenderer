@@ -89,6 +89,10 @@ public class Level {
 		{
 			l = new Frogger(x * tw, y*th, tw, th, this);
 		}break;
+		case 7:
+		{
+			l = new Speeder(x * tw, y*th, tw, th, this);
+		}break;
 		case 12:
 			l = new Pickup(x * tw, y*th, 10, 10, this);
 			break;
